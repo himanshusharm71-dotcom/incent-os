@@ -1,1 +1,0 @@
-export const supabase = null; // Will initialize in Phase 4

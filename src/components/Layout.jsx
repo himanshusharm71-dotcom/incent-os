@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
 import { Menu, X } from 'lucide-react';
+import { Outlet, useLocation } from 'react-router-dom';
 
-function Layout({ children }) {
+function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -17,10 +18,12 @@ function Layout({ children }) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const location = useLocation();
+  
   // Close sidebar when route changes on mobile
   useEffect(() => {
     if (isMobile) setSidebarOpen(false);
-  }, [window.location.pathname]);
+  }, [location.pathname, isMobile]);
 
   return (
     <div style={{ display: 'flex', width: '100%', minHeight: '100vh', background: 'var(--bg-main)', position: 'relative' }}>
@@ -65,7 +68,7 @@ function Layout({ children }) {
           flex: 1,
           overflowY: 'auto',
         }}>
-          {children}
+          <Outlet />
         </main>
       </div>
     </div>

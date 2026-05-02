@@ -12,7 +12,11 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
   : { 
       auth: {
         getSession: async () => ({ data: { session: null }, error: null }),
-        onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+        onAuthStateChange: (callback) => {
+          // Real Supabase calls this immediately
+          callback('INITIAL_SESSION', null);
+          return { data: { subscription: { unsubscribe: () => {} } } };
+        },
         signInWithPassword: async () => ({ data: {}, error: new Error("Supabase not configured") }),
         signUp: async () => ({ data: {}, error: new Error("Supabase not configured") }),
         signOut: async () => ({ error: null }),
@@ -28,6 +32,7 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
           insert: () => Promise.resolve({ error: new Error("Supabase not configured") }),
           update: () => ({ ...chain, eq: () => ({ ...chain, select: () => ({ ...chain, single: () => Promise.resolve({ data: null, error: null }) }) }) }),
           delete: () => ({ ...chain, eq: () => Promise.resolve({ error: null }) }),
+          upsert: () => Promise.resolve({ error: null }),
           then: (resolve) => resolve({ data: [], error: null })
         };
         return chain;

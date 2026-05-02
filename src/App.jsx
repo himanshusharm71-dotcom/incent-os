@@ -18,29 +18,27 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public Route */}
         <Route path="/login" element={<Login />} />
         
-        {/* Protected Routes wrapped in Layout */}
-        <Route path="/*" element={
-          <ProtectedRoute>
-            <Layout>
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/team" element={<Team />} />
-                <Route path="/tasks" element={<Tasks />} />
-                <Route path="/leaderboard" element={<Leaderboard />} />
-                <Route path="/meetings" element={<Meetings />} />
-                <Route path="/files" element={<Files />} />
-                <Route path="/communication" element={<Communication />} />
-                
-                {/* Admin Only Routes */}
-                <Route path="/analytics" element={<ProtectedRoute requireAdmin={true}><Analytics /></ProtectedRoute>} />
-                <Route path="/approvals" element={<ProtectedRoute requireAdmin={true}><ApprovalQueue /></ProtectedRoute>} />
-                <Route path="/audit" element={<ProtectedRoute requireAdmin={true}><AuditLog /></ProtectedRoute>} />
-              </Routes>
-            </Layout>
-          </ProtectedRoute>
-        } />
+        {/* Protected Routes with Layout wrapper */}
+        <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/team" element={<Team />} />
+          <Route path="/tasks" element={<Tasks />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/meetings" element={<Meetings />} />
+          <Route path="/files" element={<Files />} />
+          <Route path="/communication" element={<Communication />} />
+          
+          {/* Admin Only Routes */}
+          <Route path="/analytics" element={<ProtectedRoute requireAdmin={true}><Analytics /></ProtectedRoute>} />
+          <Route path="/approvals" element={<ProtectedRoute requireAdmin={true}><ApprovalQueue /></ProtectedRoute>} />
+          <Route path="/audit" element={<ProtectedRoute requireAdmin={true}><AuditLog /></ProtectedRoute>} />
+        </Route>
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
