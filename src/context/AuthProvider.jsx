@@ -85,25 +85,30 @@ function AuthProvider({ children }) {
 
   // Real login — uses Supabase Auth credentials only
   const login = async (email, password) => {
-    // 1. Check Master Bypass
-    if (email === MASTER_EMAIL && password === MASTER_PASS) {
-      const masterUser = {
-        uid: 'master-admin-001',
-        email: MASTER_EMAIL,
-        Name: 'Himanshu Sharma',
-        role: 'super_admin',
-        team: 'Core',
-        status: 'active',
-        points: 9999,
-        isMaster: true
-      };
-      setUser(masterUser);
-      localStorage.setItem('incent_master_session', JSON.stringify(masterUser));
-      setLoading(false);
-      return { user: masterUser };
+    // 1. Strict Master Bypass Check
+    if (email === MASTER_EMAIL) {
+      if (password === MASTER_PASS) {
+        const masterUser = {
+          uid: 'master-admin-001',
+          email: MASTER_EMAIL,
+          Name: 'Himanshu Sharma',
+          role: 'super_admin',
+          team: 'Core',
+          status: 'active',
+          points: 9999,
+          isMaster: true
+        };
+        setUser(masterUser);
+        localStorage.setItem('incent_master_session', JSON.stringify(masterUser));
+        setLoading(false);
+        return { user: masterUser };
+      } else {
+        // If it's the master email but wrong password, block it!
+        throw new Error('Invalid credentials for Master Account.');
+      }
     }
 
-    // 2. Normal Supabase Auth
+    // 2. Normal Supabase Auth (for other members)
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
     return data;
