@@ -4,7 +4,8 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error("CRITICAL: Missing Supabase credentials! The OS will not function. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel settings.");
+  console.error("🛑 CRITICAL ERROR: Supabase credentials not found in environment variables.");
+  console.warn("💡 TO FIX THIS: Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your Vercel Project Settings.");
 }
 
 export const supabase = (supabaseUrl && supabaseAnonKey) 

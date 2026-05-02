@@ -3,7 +3,8 @@ import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { supabase } from '../services/supabase';
-import { CheckCircle, XCircle, Mail, ExternalLink } from 'lucide-react';
+import { CheckCircle, XCircle, Mail, ExternalLink, Loader2 } from 'lucide-react';
+import { sendAutomatedEmail } from '../services/emailService';
 
 function ApprovalQueue() {
   const [requests, setRequests] = useState([]);
@@ -43,19 +44,15 @@ function ApprovalQueue() {
 
     if (!error) {
       const inviteUrl = `${window.location.origin}/login?invite=true&email=${encodeURIComponent(newUser.email)}`;
-      
-      // Copy to clipboard
       navigator.clipboard.writeText(inviteUrl);
 
-      // Define mailto link
-      const subject = encodeURIComponent("Invitation to join INCENT OS");
-      const body = encodeURIComponent(`Hello ${newUser.name},\n\nYou have been pre-authorized to join the INCENT OS. Please use the link below to set your password and access the portal:\n\n${inviteUrl}\n\nWelcome to the team!`);
-      const mailtoUrl = `mailto:${newUser.email}?subject=${subject}&body=${body}`;
-
-      const confirmSend = window.confirm(`✅ Success! ${newUser.email} authorized and link copied.\n\nWould you like to open your email app to send the invite now?`);
+      // AUTOMATED EMAIL CALL
+      const sent = await sendAutomatedEmail(newUser.email, newUser.name, 'invite', inviteUrl);
       
-      if (confirmSend) {
-        window.location.href = mailtoUrl;
+      if (sent) {
+        alert(`🚀 FULL SUCCESS! \n\n1. ${newUser.email} authorized.\n2. Automated invite email SENT.\n3. Link also copied to clipboard.`);
+      } else {
+        alert(`✅ Authorized! \n\nLink copied to clipboard. (Automated email failed - please send the link manually).`);
       }
 
       setNewUser({ name: '', email: '', role: 'member', team: 'Technical Support' });
@@ -75,15 +72,12 @@ function ApprovalQueue() {
       .eq('id', id);
       
     if (!error) {
+      const user = requests.find(r => r.id === id);
       setRequests(requests.filter(req => req.id !== id));
       
-      const confirmNotify = window.confirm("✅ User Approved! Would you like to send them a quick notification email?");
-      if (confirmNotify) {
-        const user = requests.find(r => r.id === id);
-        const subject = encodeURIComponent("INCENT OS: Your account is now ACTIVE!");
-        const body = encodeURIComponent(`Hello ${user?.Name},\n\nYour account on INCENT OS has been approved. You can now log in and access all features.\n\nLogin here: ${window.location.origin}/login\n\nWelcome aboard!`);
-        window.location.href = `mailto:${user?.email}?subject=${subject}&body=${body}`;
-      }
+      // AUTOMATED APPROVAL EMAIL
+      sendAutomatedEmail(user.email, user.Name, 'approve');
+      alert(`✅ User Approved! An automated confirmation has been sent to ${user.email}.`);
     } else {
       alert("Error approving user: " + error.message);
     }
