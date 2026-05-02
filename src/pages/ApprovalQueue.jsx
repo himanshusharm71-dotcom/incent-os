@@ -44,12 +44,12 @@ function ApprovalQueue() {
     if (!error) {
       const inviteUrl = `${window.location.origin}/login?invite=true&email=${encodeURIComponent(newUser.email)}`;
       navigator.clipboard.writeText(inviteUrl);
-      alert(`Success! ${newUser.email} is authorized. \n\nInvite link copied to clipboard! Send this to the member.`);
+      alert(`✅ Success! ${newUser.email} has been pre-authorized.\n\nAN INVITE LINK HAS BEEN COPIED TO YOUR CLIPBOARD!\n\nPlease send this link to the member manually so they can set up their password.`);
       setNewUser({ name: '', email: '', role: 'member', team: 'Technical Support' });
       setShowAddForm(false);
       fetchRequests();
     } else {
-      alert("Error: " + error.message);
+      alert("Error: " + (error.message || "Failed to authorize user. Check Supabase connection."));
     }
     setLoading(false);
   };

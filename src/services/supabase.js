@@ -23,7 +23,7 @@ export const supabase = (supabaseUrl && supabaseAnonKey)
       },
       from: () => {
         const chain = {
-          select: () => ({
+          select: (...args) => ({
             ...chain,
             eq: () => ({ ...chain, single: () => Promise.resolve({ data: null, error: null }) }),
             order: () => ({ ...chain, limit: () => Promise.resolve({ data: [], error: null }) }),

@@ -7,6 +7,14 @@ import { Badge } from '../components/ui/Badge';
 import { Avatar } from '../components/ui/Avatar';
 import { Send, Hash, Megaphone, Users, Shield, Lock, Search } from 'lucide-react';
 
+// Local Crown icon definition at top to avoid TDZ
+const Crown = ({ size, color }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z" />
+    <path d="M5 20h14" />
+  </svg>
+);
+
 function Communication() {
   const { user } = useAuth();
   const [activeChannel, setActiveChannel] = useState('Broadcast');
@@ -217,13 +225,5 @@ function Communication() {
     </div>
   );
 }
-
-// Local Crown icon since it's used before import in channels array
-const Crown = ({ size, color }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z" />
-    <path d="M5 20h14" />
-  </svg>
-);
 
 export default Communication;
