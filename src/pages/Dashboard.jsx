@@ -150,6 +150,8 @@ function Dashboard() {
 
     } catch (err) {
       console.error('Dashboard fetch error:', err);
+      // Ensure stats don't stay null
+      setStats(prev => ({ ...prev, recentUsers: [] }));
     }
   };
 

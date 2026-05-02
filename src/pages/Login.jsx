@@ -17,9 +17,16 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const [pendingMsg, setPendingMsg] = useState('');
 
-  // Secret Invite System: Only show registration if ?invite=true is in URL
   const searchParams = new URLSearchParams(window.location.search);
   const isInvited = searchParams.get('invite') === 'true';
+  const emailParam = searchParams.get('email') || '';
+
+  useState(() => {
+    if (isInvited && emailParam) {
+      setIsLogin(false);
+      setEmail(emailParam);
+    }
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
