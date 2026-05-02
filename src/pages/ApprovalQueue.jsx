@@ -31,6 +31,7 @@ function ApprovalQueue() {
 
   const handlePreAuthorize = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const { error } = await supabase.from('users').insert([{
       Name: newUser.name,
       email: newUser.email,
@@ -41,13 +42,16 @@ function ApprovalQueue() {
     }]);
 
     if (!error) {
-      alert(`User ${newUser.email} is now pre-authorized!`);
+      const inviteUrl = `${window.location.origin}/login?invite=true&email=${encodeURIComponent(newUser.email)}`;
+      navigator.clipboard.writeText(inviteUrl);
+      alert(`Success! ${newUser.email} is authorized. \n\nInvite link copied to clipboard! Send this to the member.`);
       setNewUser({ name: '', email: '', role: 'member', team: 'Technical Support' });
       setShowAddForm(false);
       fetchRequests();
     } else {
       alert("Error: " + error.message);
     }
+    setLoading(false);
   };
 
   const handleApprove = async (id) => {
