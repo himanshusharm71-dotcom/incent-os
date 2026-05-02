@@ -9,4 +9,27 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = (supabaseUrl && supabaseAnonKey) 
   ? createClient(supabaseUrl, supabaseAnonKey)
-  : { auth: {}, from: () => ({ select: () => ({ eq: () => ({ single: () => ({}) }) }) }) }; // Safe mock to prevent crash
+  : { 
+      auth: {
+        getSession: async () => ({ data: { session: null }, error: null }),
+        onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+        signInWithPassword: async () => ({ data: {}, error: new Error("Supabase not configured") }),
+        signUp: async () => ({ data: {}, error: new Error("Supabase not configured") }),
+        signOut: async () => ({ error: null }),
+      },
+      from: () => {
+        const chain = {
+          select: () => ({
+            ...chain,
+            eq: () => ({ ...chain, single: () => Promise.resolve({ data: null, error: null }) }),
+            order: () => ({ ...chain, limit: () => Promise.resolve({ data: [], error: null }) }),
+            then: (resolve) => resolve({ data: [], count: 0, error: null })
+          }),
+          insert: () => Promise.resolve({ error: new Error("Supabase not configured") }),
+          update: () => ({ ...chain, eq: () => ({ ...chain, select: () => ({ ...chain, single: () => Promise.resolve({ data: null, error: null }) }) }) }),
+          delete: () => ({ ...chain, eq: () => Promise.resolve({ error: null }) }),
+          then: (resolve) => resolve({ data: [], error: null })
+        };
+        return chain;
+      }
+    };
