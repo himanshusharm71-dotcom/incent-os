@@ -76,7 +76,14 @@ function ApprovalQueue() {
       
     if (!error) {
       setRequests(requests.filter(req => req.id !== id));
-      alert("User Approved!");
+      
+      const confirmNotify = window.confirm("✅ User Approved! Would you like to send them a quick notification email?");
+      if (confirmNotify) {
+        const user = requests.find(r => r.id === id);
+        const subject = encodeURIComponent("INCENT OS: Your account is now ACTIVE!");
+        const body = encodeURIComponent(`Hello ${user?.Name},\n\nYour account on INCENT OS has been approved. You can now log in and access all features.\n\nLogin here: ${window.location.origin}/login\n\nWelcome aboard!`);
+        window.location.href = `mailto:${user?.email}?subject=${subject}&body=${body}`;
+      }
     } else {
       alert("Error approving user: " + error.message);
     }
@@ -135,8 +142,33 @@ function ApprovalQueue() {
                 <option key={t} value={t}>{t}</option>
               ))}
             </select>
-            <Button type="submit" variant="primary" style={{ gridColumn: 'span 1' }}>Authorize & Invite</Button>
+            <Button type="submit" variant="primary" style={{ gridColumn: 'span 1' }}>Authorize & Generate Link</Button>
           </form>
+          
+          {/* Quick Share Options (Visible after a link is generated or if you want to share manually) */}
+          <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px dashed var(--border-light)', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', width: '100%', marginBottom: '5px' }}>Quick Share Options:</span>
+            <Button 
+              variant="outline" 
+              icon={<Mail size={16} />} 
+              onClick={() => {
+                const email = prompt("Enter user email:");
+                if(email) window.location.href = `mailto:${email}?subject=Invitation&body=Join here: ${window.location.origin}/login?invite=true`;
+              }}
+            >
+              Share via Email
+            </Button>
+            <Button 
+              variant="outline" 
+              style={{ borderColor: '#25D366', color: '#25D366' }}
+              onClick={() => {
+                const text = encodeURIComponent(`Join INCENT OS: ${window.location.origin}/login?invite=true`);
+                window.open(`https://wa.me/?text=${text}`, '_blank');
+              }}
+            >
+              Share via WhatsApp
+            </Button>
+          </div>
         </Card>
       )}
 
