@@ -3,7 +3,7 @@ import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { supabase } from '../services/supabase';
-import { CheckCircle, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Mail, ExternalLink } from 'lucide-react';
 
 function ApprovalQueue() {
   const [requests, setRequests] = useState([]);
@@ -43,8 +43,21 @@ function ApprovalQueue() {
 
     if (!error) {
       const inviteUrl = `${window.location.origin}/login?invite=true&email=${encodeURIComponent(newUser.email)}`;
+      
+      // Copy to clipboard
       navigator.clipboard.writeText(inviteUrl);
-      alert(`✅ Success! ${newUser.email} has been pre-authorized.\n\nAN INVITE LINK HAS BEEN COPIED TO YOUR CLIPBOARD!\n\nPlease send this link to the member manually so they can set up their password.`);
+
+      // Define mailto link
+      const subject = encodeURIComponent("Invitation to join INCENT OS");
+      const body = encodeURIComponent(`Hello ${newUser.name},\n\nYou have been pre-authorized to join the INCENT OS. Please use the link below to set your password and access the portal:\n\n${inviteUrl}\n\nWelcome to the team!`);
+      const mailtoUrl = `mailto:${newUser.email}?subject=${subject}&body=${body}`;
+
+      const confirmSend = window.confirm(`✅ Success! ${newUser.email} authorized and link copied.\n\nWould you like to open your email app to send the invite now?`);
+      
+      if (confirmSend) {
+        window.location.href = mailtoUrl;
+      }
+
       setNewUser({ name: '', email: '', role: 'member', team: 'Technical Support' });
       setShowAddForm(false);
       fetchRequests();

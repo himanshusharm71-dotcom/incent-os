@@ -121,17 +121,38 @@ function AuthProvider({ children }) {
     if (error) throw error;
 
     if (data.user) {
-      // 2. Add to users table with status=pending (awaiting admin approval)
-      const { error: dbError } = await supabase.from('users').insert([{
-        id: data.user.id,
-        Name: name,
-        email: email,
-        role: 'pending',
-        team: teamPref,
-        status: 'pending',
-        points: 0,
-      }]);
-      if (dbError) throw dbError;
+      // 2. Check if they were pre-authorized by email
+      const { data: preAuth } = await supabase
+        .from('users')
+        .select('*')
+        .eq('email', email)
+        .single();
+
+      if (preAuth) {
+        // If pre-authorized, update the record with their real Auth ID and set to active
+        const { error: dbError } = await supabase
+          .from('users')
+          .update({ 
+            id: data.user.id, 
+            Name: name, 
+            status: 'active',
+            role: preAuth.role !== 'pending' ? preAuth.role : 'member' 
+          })
+          .eq('email', email);
+        if (dbError) throw dbError;
+      } else {
+        // Normal signup: Add to users table with status=pending (awaiting admin approval)
+        const { error: dbError } = await supabase.from('users').insert([{
+          id: data.user.id,
+          Name: name,
+          email: email,
+          role: 'pending',
+          team: teamPref,
+          status: 'pending',
+          points: 0,
+        }]);
+        if (dbError) throw dbError;
+      }
     }
 
     // Sign them back out immediately — they must wait for admin approval
