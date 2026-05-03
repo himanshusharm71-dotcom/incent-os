@@ -41,20 +41,20 @@ function PersonCard({ person, size = 'md', badgeVariant = 'primary' }) {
   return (
     <div className="card-3d" style={{
       display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem',
-      padding: '1.5rem', background: 'rgba(255,255,255,0.03)', borderRadius: '24px', textAlign: 'center',
-      minWidth: size === 'lg' ? '180px' : '150px'
+      padding: '1.5rem', background: '#fff', borderRadius: '24px', textAlign: 'center',
+      minWidth: size === 'lg' ? '180px' : '150px', border: '1px solid var(--border-light)'
     }}>
       <div style={{
         width: avatarSize, height: avatarSize, borderRadius: '50%', overflow: 'hidden',
         border: `3px solid ${badgeVariant === 'danger' ? '#EF4444' : 'var(--accent-primary)'}`,
-        boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+        boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
       }}>
         {imgSrc
           ? <img src={imgSrc} alt={person.Name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           : <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(person.Name || 'U')}&background=F97316&color=fff&size=128`} alt={person.Name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         }
       </div>
-      <p style={{ margin: 0, fontWeight: '800', fontSize: size === 'lg' ? '1.1rem' : '0.9rem', color: '#fff' }}>{person.Name}</p>
+      <p style={{ margin: 0, fontWeight: '800', fontSize: size === 'lg' ? '1.1rem' : '0.9rem', color: 'var(--text-primary)' }}>{person.Name}</p>
       <Badge variant={badgeVariant} size="sm">{getLeadershipTitle(person.Name, person.role)}</Badge>
     </div>
   );
@@ -106,46 +106,46 @@ function Dashboard() {
     { name: 'Social Media & Branding', color: '#06B6D4', icon: MessageSquare }
   ];
 
-  if (loading) return <div style={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontWeight: '800', letterSpacing: '4px' }}>ACCESSING KERNEL...</div>;
+  if (loading) return <div style={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontWeight: '800', letterSpacing: '2px' }}>LOADING SYSTEM...</div>;
 
   return (
-    <div className="animate-fade-in perspective-container" style={{ display: 'flex', flexDirection: 'column', gap: '3rem', paddingBottom: '6rem' }}>
+    <div className="animate-fade-in perspective-container" style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', paddingBottom: '6rem' }}>
       
-      {/* 3D Hero Section */}
+      {/* 3D Hero Section (Light Mode) */}
       <div className="card-3d floating" style={{ 
-        padding: '4rem 3rem', background: 'linear-gradient(135deg, rgba(249,115,22,0.15) 0%, rgba(15,23,42,0) 100%)', 
-        borderRadius: '40px', border: '1px solid rgba(255,255,255,0.1)', position: 'relative', overflow: 'hidden'
+        padding: '3.5rem 2.5rem', background: 'linear-gradient(135deg, #fff 0%, rgba(249,115,22,0.05) 100%)', 
+        borderRadius: '32px', border: '1px solid var(--border-light)', position: 'relative', overflow: 'hidden',
+        boxShadow: '0 20px 40px rgba(0,0,0,0.03)'
       }}>
         <div style={{ position: 'relative', zIndex: 2 }}>
-          <Badge variant="primary" style={{ marginBottom: '1.5rem', padding: '6px 16px', fontSize: '0.7rem' }}>CHAIR EXECUTIVE COMMAND</Badge>
-          <h1 style={{ margin: '0 0 10px', fontSize: '3.5rem', fontWeight: '900', color: '#fff', letterSpacing: '-2px' }}>
+          <Badge variant="primary" style={{ marginBottom: '1.25rem', padding: '6px 16px' }}>CHAIR EXECUTIVE COMMAND</Badge>
+          <h1 style={{ margin: '0 0 10px', fontSize: '3rem', fontWeight: '900', color: 'var(--text-primary)', letterSpacing: '-1.5px' }}>
             Mission <span style={{ color: 'var(--accent-primary)' }}>Control</span>
           </h1>
-          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '1.2rem', maxWidth: '600px' }}>
-            Overseeing the digital architecture of INCENT. Real-time telemetry and 3D portal access active.
+          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '1.1rem', maxWidth: '600px' }}>
+            Overseeing the organization's digital architecture. Real-time telemetry and wing portal access active.
           </p>
         </div>
-        <Box size={300} color="var(--accent-primary)" style={{ position: 'absolute', right: '-50px', top: '-50px', opacity: 0.1, transform: 'rotate(20deg)' }} />
+        <Box size={200} color="var(--accent-primary)" style={{ position: 'absolute', right: '0', top: '-20px', opacity: 0.05, transform: 'rotate(20deg)' }} />
       </div>
 
-      {/* Admin Portal Switcher - THE "SEPERATE PORTALS" */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      {/* Admin Portal Switcher */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ padding: '8px', background: 'rgba(249,115,22,0.1)', borderRadius: '10px' }}><Shield size={20} color="var(--accent-primary)" /></div>
-          <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '800' }}>Preview Team Portals</h2>
+          <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: '800' }}>Preview Wing Portals</h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.25rem' }}>
           {wings.map((wing, i) => (
-            <Card key={i} className="card-3d" style={{ borderBottom: `4px solid ${wing.color}` }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center', textAlign: 'center' }}>
-                <div style={{ padding: '12px', background: `${wing.color}20`, borderRadius: '14px' }}>
-                  <wing.icon size={28} color={wing.color} />
+            <Card key={i} className="card-3d" style={{ borderBottom: `4px solid ${wing.color}`, background: '#fff' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', alignItems: 'center', textAlign: 'center' }}>
+                <div style={{ padding: '10px', background: `${wing.color}10`, borderRadius: '12px' }}>
+                  <wing.icon size={24} color={wing.color} />
                 </div>
-                <h4 style={{ margin: 0, color: '#fff' }}>{wing.name}</h4>
-                <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>Real-time team portal view</p>
-                <Button size="sm" style={{ background: wing.color, color: '#fff', width: '100%', marginTop: '10px' }} onClick={() => navigate('/')}>
+                <h4 style={{ margin: 0, fontSize: '0.95rem' }}>{wing.name}</h4>
+                <button style={{ background: wing.color, color: '#fff', width: '100%', marginTop: '10px', padding: '8px', border: 'none', borderRadius: '10px', fontWeight: '700', cursor: 'pointer', fontSize: '0.8rem' }} onClick={() => navigate('/')}>
                   Enter Portal
-                </Button>
+                </button>
               </div>
             </Card>
           ))}
@@ -153,30 +153,30 @@ function Dashboard() {
       </div>
 
       {/* Global Stats Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1.5rem' }}>
         {[
           { label: 'Personnel', value: stats.totalMembers, icon: Users, color: '#6366F1' },
           { label: 'Operations', value: stats.tasksCompleted, icon: CheckCircle, color: '#10B981' },
           { label: 'Pending', value: stats.pendingTasks, icon: Clock, color: '#F59E0B' },
-          { label: 'System Health', value: '98%', icon: Activity, color: '#3B82F6' },
+          { label: 'Health', value: '99%', icon: Activity, color: '#3B82F6' },
         ].map((s, i) => (
-          <Card key={i} style={{ padding: '2rem', textAlign: 'center' }}>
-            <div style={{ width: 50, height: 50, borderRadius: '15px', background: `${s.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
-              <s.icon size={24} color={s.color} />
+          <Card key={i} style={{ padding: '1.5rem', textAlign: 'center', background: '#fff' }}>
+            <div style={{ width: 44, height: 44, borderRadius: '12px', background: `${s.color}10`, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem' }}>
+              <s.icon size={20} color={s.color} />
             </div>
-            <p style={{ margin: '0 0 5px', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '700' }}>{s.label}</p>
-            <h3 style={{ margin: 0, fontSize: '2.2rem', fontWeight: '900', color: '#fff' }}>{s.value}</h3>
+            <p style={{ margin: '0 0 2px', fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '700' }}>{s.label}</p>
+            <h3 style={{ margin: 0, fontSize: '1.8rem', fontWeight: '900', color: 'var(--text-primary)' }}>{s.value}</h3>
           </Card>
         ))}
       </div>
 
-      {/* Leadership 3D View */}
+      {/* Leadership Command */}
       <div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '2rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.5rem' }}>
           <Crown size={24} color="#F59E0B" />
-          <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '800' }}>Global Command</h2>
+          <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: '800' }}>Global Command</h2>
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2rem', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
           {executiveTeam.map((m, i) => <PersonCard key={i} person={m} size="lg" badgeVariant={m.role === 'super_admin' ? 'danger' : 'primary'} />)}
         </div>
       </div>
