@@ -10,7 +10,9 @@ function Analytics() {
     teamStats: [],
     topPerformers: [],
     inactiveMembers: [],
-    performanceTrend: [75, 82, 78, 85, 92, 88, 95] // Mock trend
+    performanceTrend: [],
+    totalPoints: 0,
+    efficiency: 0
   });
   const [loading, setLoading] = useState(true);
 
@@ -37,11 +39,28 @@ function Analytics() {
       // 4. Inactive Members (Simulated by 0 points or low activity)
       const inactive = users?.filter(u => (u.points || 0) < 50 && u.role === 'member').slice(0, 4) || [];
 
+      // 5. Calculate real total points
+      const totalPoints = (users || []).reduce((sum, u) => sum + (u.points || 0), 0);
+
+      // 6. Calculate real efficiency from tasks
+      const { data: tasks } = await supabase.from('tasks').select('status');
+      const completedTasks = tasks?.filter(t => t.status === 'completed').length || 0;
+      const totalTasks = tasks?.length || 0;
+      const efficiency = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+      // 7. Generate real trend from team avg points (one bar per team)
+      const trend = teamData.map(t => t.performance);
+      // Normalize to percentages for bar chart
+      const maxPerf = Math.max(...trend, 1);
+      const normalizedTrend = trend.map(v => Math.round((v / maxPerf) * 100));
+
       setStats({
         teamStats: teamData,
         topPerformers: top,
         inactiveMembers: inactive,
-        performanceTrend: [75, 82, 78, 85, 92, 88, 95]
+        performanceTrend: normalizedTrend.length > 0 ? normalizedTrend : [0],
+        totalPoints,
+        efficiency
       });
     } catch (err) {
       console.error("Analytics fetch error:", err);
@@ -64,9 +83,9 @@ function Analytics() {
         <Card style={{ background: 'linear-gradient(135deg, #6366F1, #4F46E5)', color: '#fff', border: 'none' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <p style={{ margin: 0, opacity: 0.8, fontSize: '0.9rem' }}>Overall Efficiency</p>
-              <h2 style={{ fontSize: '2.5rem', margin: '0.5rem 0' }}>94.2%</h2>
-              <Badge variant="success" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff' }}>+5.4% this week</Badge>
+              <p style={{ margin: 0, opacity: 0.8, fontSize: '0.9rem' }}>Task Completion Rate</p>
+              <h2 style={{ fontSize: '2.5rem', margin: '0.5rem 0' }}>{stats.efficiency}%</h2>
+              <Badge variant="success" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff' }}>Based on real task data</Badge>
             </div>
             <TrendingUp size={48} style={{ opacity: 0.2 }} />
           </div>
@@ -76,8 +95,8 @@ function Analytics() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
               <p style={{ margin: 0, opacity: 0.8, fontSize: '0.9rem' }}>Total Points Generated</p>
-              <h2 style={{ fontSize: '2.5rem', margin: '0.5rem 0' }}>14.8k</h2>
-              <Badge variant="success" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff' }}>Active OS cycle</Badge>
+              <h2 style={{ fontSize: '2.5rem', margin: '0.5rem 0' }}>{stats.totalPoints}</h2>
+              <Badge variant="success" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff' }}>From {stats.topPerformers.length} active members</Badge>
             </div>
             <Target size={48} style={{ opacity: 0.2 }} />
           </div>
@@ -162,7 +181,7 @@ function Analytics() {
         <Card>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem' }}>
             <Activity size={20} color="#10B981" />
-            <h3 style={{ margin: 0 }}>Weekly Activity Trend</h3>
+            <h3 style={{ margin: 0 }}>Team Performance Trend</h3>
           </div>
           <div style={{ display: 'flex', alignItems: 'flex-end', gap: '15px', height: '150px', padding: '10px 0' }}>
             {stats.performanceTrend.map((val, i) => (
@@ -174,7 +193,7 @@ function Analytics() {
                   borderRadius: '4px',
                   opacity: 0.6 + (i * 0.05)
                 }}></div>
-                <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>Day {i+1}</span>
+                <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>T{i+1}</span>
               </div>
             ))}
           </div>

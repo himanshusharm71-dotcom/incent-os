@@ -50,10 +50,16 @@ function Team() {
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'Leader')}&background=F97316&color=fff`;
   };
 
+  // Get real points from fetched members
+  const getUserPoints = (name) => {
+    const u = members.find(m => m.Name?.toLowerCase().includes(name.toLowerCase()));
+    return u ? (u.points || 0) : 0;
+  };
+
   const executiveTeam = [
-    { Name: 'Himanshu Sharma', role: 'super_admin', points: 9999 },
-    { Name: 'Pratish Rawat', role: 'admin', points: 8500 },
-    { Name: 'Aditya Kapoor', role: 'admin', points: 8200 }
+    { Name: 'Himanshu Sharma', role: 'super_admin', points: getUserPoints('himanshu') },
+    { Name: 'Pratish Rawat', role: 'admin', points: getUserPoints('pratish') },
+    { Name: 'Aditya Kapoor', role: 'admin', points: getUserPoints('aditya') }
   ];
 
   return (
@@ -113,7 +119,6 @@ function Team() {
               </Badge>
               <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
                 <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><Star size={16} color="#F59E0B" /> {leader.points} pts</span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><Award size={16} color="var(--accent-primary)" /> Elite Status</span>
               </div>
             </Card>
           ))}

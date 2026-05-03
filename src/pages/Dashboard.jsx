@@ -140,12 +140,16 @@ function Dashboard() {
         recentUsers: users || []
       });
 
-      // Mock recent activity (we'll replace this with real logs later)
-      const recent = [
-        { id: 1, text: 'New task assigned to Technical Team', time: '2 hours ago' },
-        { id: 2, text: 'Himanshu Sharma updated the File Registry', time: '5 hours ago' },
-        { id: 3, text: 'Meeting scheduled for Event Management', time: '1 day ago' },
-      ];
+      // Generate real recent activity from tasks
+      const { data: recentTasks } = await supabase.from('tasks').select('*').order('created_at', { ascending: false }).limit(5);
+      const recent = (recentTasks || []).map((t, i) => ({
+        id: i + 1,
+        text: `Task "${t.title}" — ${t.status} (${t.assigned_to || 'Unassigned'})`,
+        time: t.created_at ? new Date(t.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'Unknown'
+      }));
+      if (recent.length === 0) {
+        recent.push({ id: 1, text: 'No recent activity yet. Assign tasks to get started!', time: 'Now' });
+      }
       setRecentActivity(recent);
 
     } catch (err) {
