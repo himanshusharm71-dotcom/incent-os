@@ -44,20 +44,39 @@ function ApprovalQueue() {
 
     if (!error) {
       const inviteUrl = `${window.location.origin}/login?invite=true&email=${encodeURIComponent(newUser.email)}`;
+      
+      // Try clipboard copy (may fail on some browsers)
+      let copied = false;
       try {
         await navigator.clipboard.writeText(inviteUrl);
+        copied = true;
       } catch (err) {
-        console.warn('Clipboard write failed. User must copy manually later.');
+        console.warn('Clipboard API unavailable');
       }
 
-      // AUTOMATED EMAIL CALL
-      const sent = await sendAutomatedEmail(newUser.email, newUser.name, 'invite', inviteUrl);
-      
-      if (sent) {
-        alert(`🚀 FULL SUCCESS! \n\n1. ${newUser.email} authorized.\n2. Automated invite email SENT.\n3. Link also copied to clipboard.`);
-      } else {
-        alert(`✅ Authorized! \n\nLink copied to clipboard. (Automated email failed - please send the link manually).`);
+      // Try automated email (may fail if EmailJS not configured)
+      let emailed = false;
+      try {
+        emailed = await sendAutomatedEmail(newUser.email, newUser.name, 'invite', inviteUrl);
+      } catch (err) {
+        console.warn('Email send failed');
       }
+
+      // ALWAYS show the link so user can manually copy it
+      const statusParts = [
+        `✅ ${newUser.name} (${newUser.email}) has been AUTHORIZED in the database!`,
+        '',
+        copied ? '📋 Invite link copied to clipboard.' : '⚠️ Could not auto-copy link.',
+        emailed ? '📧 Invite email sent!' : '📧 Email not configured (share link manually).',
+        '',
+        '🔗 INVITE LINK (share this with the user):',
+        inviteUrl,
+        '',
+        'The user should open this link, click "Request Access", set their password, and they will be auto-activated.'
+      ];
+      
+      // Use prompt so user can easily copy the link
+      window.prompt(statusParts.join('\n'), inviteUrl);
 
       setNewUser({ name: '', email: '', role: 'member', team: 'Technical Support' });
       setShowAddForm(false);

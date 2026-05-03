@@ -88,6 +88,17 @@ function AuthProvider({ children }) {
     // 1. Strict Master Bypass Check
     if (email === MASTER_EMAIL) {
       if (password === MASTER_PASS) {
+        // Fetch real points from DB if available
+        let realPoints = 0;
+        try {
+          const { data: dbUser } = await supabase
+            .from('users')
+            .select('points')
+            .eq('email', MASTER_EMAIL)
+            .single();
+          if (dbUser) realPoints = dbUser.points || 0;
+        } catch (e) { /* ignore, default to 0 */ }
+
         const masterUser = {
           uid: 'master-admin-001',
           email: MASTER_EMAIL,
@@ -95,7 +106,7 @@ function AuthProvider({ children }) {
           role: 'super_admin',
           team: 'Core',
           status: 'active',
-          points: 9999,
+          points: realPoints,
           isMaster: true
         };
         setUser(masterUser);
