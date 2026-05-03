@@ -44,7 +44,11 @@ function ApprovalQueue() {
 
     if (!error) {
       const inviteUrl = `${window.location.origin}/login?invite=true&email=${encodeURIComponent(newUser.email)}`;
-      navigator.clipboard.writeText(inviteUrl);
+      try {
+        await navigator.clipboard.writeText(inviteUrl);
+      } catch (err) {
+        console.warn('Clipboard write failed. User must copy manually later.');
+      }
 
       // AUTOMATED EMAIL CALL
       const sent = await sendAutomatedEmail(newUser.email, newUser.name, 'invite', inviteUrl);

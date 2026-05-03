@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../services/supabase';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
+import { Avatar } from '../components/ui/Avatar';
+import { Button } from '../components/ui/Button';
 import { Shield, Clock, User, HardDrive, Filter, Search } from 'lucide-react';
 
 function AuditLog() {
@@ -105,22 +107,5 @@ function AuditLog() {
     </div>
   );
 }
-
-// Local Button component if needed (or use the one from UI)
-const Button = ({ children, variant, icon, onClick, style }) => (
-  <button 
-    onClick={onClick}
-    style={{ 
-      display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 18px', 
-      borderRadius: '10px', border: 'none', cursor: 'pointer', fontWeight: '600', fontSize: '0.9rem',
-      background: variant === 'primary' ? 'var(--accent-primary)' : 'rgba(0,0,0,0.05)',
-      color: variant === 'primary' ? '#fff' : 'var(--text-primary)',
-      transition: 'all 0.2s',
-      ...style
-    }}
-  >
-    {icon} {children}
-  </button>
-);
 
 export default AuditLog;

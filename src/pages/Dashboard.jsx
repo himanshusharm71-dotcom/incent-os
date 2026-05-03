@@ -155,10 +155,15 @@ function Dashboard() {
     }
   };
 
+  const getUserPoints = (name) => {
+    const u = stats.recentUsers.find(user => user.Name?.toLowerCase().includes(name.toLowerCase()));
+    return u ? (u.points || 0) : 0;
+  };
+
   const executiveTeam = [
-    { Name: 'Himanshu Sharma', role: 'super_admin', points: 9999 },
-    { Name: 'Pratish Rawat', role: 'admin', points: 8500 },
-    { Name: 'Aditya Kapoor', role: 'admin', points: 8200 }
+    { Name: 'Himanshu Sharma', role: 'super_admin', points: getUserPoints('himanshu') },
+    { Name: 'Pratish Rawat', role: 'admin', points: getUserPoints('pratish') },
+    { Name: 'Aditya Kapoor', role: 'admin', points: getUserPoints('aditya') }
   ];
 
   const teamLeaders = stats.recentUsers.filter(u => u.role === 'leader').slice(0, 4);
