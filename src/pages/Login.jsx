@@ -4,47 +4,34 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
-import { Mail, Lock, User, Shield } from 'lucide-react';
+import { Mail, Lock, AlertCircle, Info } from 'lucide-react';
 
 function Login() {
-  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const { login, requestAccess } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [pendingMsg, setPendingMsg] = useState('');
-
-  const searchParams = new URLSearchParams(window.location.search);
-  const isInvited = searchParams.get('invite') === 'true';
-  const emailParam = searchParams.get('email') || '';
-
-  useState(() => {
-    if (isInvited && emailParam) {
-      setIsLogin(false);
-      setEmail(emailParam);
-    }
-  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setPendingMsg('');
     setLoading(true);
     try {
-      if (isLogin) {
-        await login(email, password);
-        navigate('/');
-      } else {
-        const teamPref = document.getElementById('teamPref').value;
-        await requestAccess(email, password, name, teamPref);
-        setPendingMsg(`✅ Request sent! Your account will be activated once the Chair approves your request.`);
-        setIsLogin(true);
-      }
+      await login(email, password);
+      navigate('/');
     } catch (err) {
-      setError(err.message || 'An error occurred. Please try again.');
+      const msg = err.message || '';
+      if (msg.toLowerCase().includes('invalid login') || msg.toLowerCase().includes('invalid credentials')) {
+        setError('Wrong email or password. Please check and try again.');
+      } else if (msg.toLowerCase().includes('email not confirmed')) {
+        setError('Your email is not confirmed yet. Ask the Admin to disable email confirmation in Supabase, or check your inbox for a confirmation email.');
+      } else if (msg.toLowerCase().includes('fetch') || msg.toLowerCase().includes('network')) {
+        setError('Network error. Please check your internet connection.');
+      } else {
+        setError(msg || 'Login failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -62,25 +49,26 @@ function Login() {
       overflow: 'hidden'
     }} className="animate-fade-in">
       
-      {/* Background Decorative Elements */}
+      {/* Background */}
       <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(249, 115, 22, 0.1) 0%, transparent 70%)', borderRadius: '50%', zIndex: 0, pointerEvents: 'none' }}></div>
       <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '400px', height: '400px', background: 'var(--accent-primary)', borderRadius: '50%', filter: 'blur(150px)', opacity: 0.1, zIndex: 0 }}></div>
       <div style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '400px', height: '400px', background: 'var(--accent-secondary)', borderRadius: '50%', filter: 'blur(150px)', opacity: 0.1, zIndex: 0 }}></div>
 
       <Card style={{ 
         width: '100%', 
-        maxWidth: '440px', 
+        maxWidth: '420px', 
         zIndex: 1, 
         padding: '3rem 2.5rem',
-        background: 'rgba(255, 255, 255, 0.85)',
+        background: 'rgba(255, 255, 255, 0.92)',
         backdropFilter: 'blur(20px)',
         border: '1px solid rgba(255, 255, 255, 1)',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05) inset'
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.1)'
       }}>
-        <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        {/* Logo */}
+        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
           <div style={{
-            width: '56px',
-            height: '56px',
+            width: '60px',
+            height: '60px',
             background: 'linear-gradient(135deg, #F97316, #EA580C)',
             borderRadius: '16px',
             display: 'flex',
@@ -89,48 +77,40 @@ function Login() {
             fontWeight: 'bold',
             fontSize: '1.8rem',
             color: '#fff',
-            margin: '0 auto 1.5rem',
-            boxShadow: '0 10px 25px -5px rgba(249, 115, 22, 0.5), inset 0 2px 4px rgba(255,255,255,0.3)',
-            border: '1px solid rgba(255,255,255,0.2)'
+            margin: '0 auto 1.25rem',
+            boxShadow: '0 10px 25px -5px rgba(249, 115, 22, 0.5)',
           }}>I</div>
-          <Badge variant="primary" style={{ marginBottom: '10px' }}>Private Operating System</Badge>
-          <h1 style={{ fontSize: '2rem', fontWeight: '800', margin: '0 0 0.5rem 0', background: 'linear-gradient(to right, #0F172A, #334155)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px' }}>
+          <Badge variant="primary" style={{ marginBottom: '8px' }}>Private Operating System</Badge>
+          <h1 style={{ fontSize: '2rem', fontWeight: '800', margin: '0.5rem 0', color: '#0F172A', letterSpacing: '-0.5px' }}>
             INCENT OS
           </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-            Restricted Team Portal. Please sign in to continue.
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>
+            Enter your credentials to access the portal.
           </p>
         </div>
 
+        {/* Error */}
         {error && (
-          <div style={{ background: 'rgba(239, 68, 68, 0.15)', color: 'var(--status-danger)', padding: '10px', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.85rem', textAlign: 'center' }}>
+          <div style={{ 
+            background: 'rgba(239, 68, 68, 0.08)', 
+            color: '#DC2626', 
+            padding: '12px 14px', 
+            borderRadius: '10px', 
+            marginBottom: '1.25rem', 
+            fontSize: '0.85rem',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '8px',
+            border: '1px solid rgba(239,68,68,0.2)'
+          }}>
+            <AlertCircle size={16} style={{ flexShrink: 0, marginTop: '1px' }} />
             {error}
           </div>
         )}
 
-        {pendingMsg && (
-          <div style={{ background: 'rgba(16, 185, 129, 0.12)', color: '#10B981', padding: '12px', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.85rem', textAlign: 'center', border: '1px solid rgba(16,185,129,0.25)' }}>
-            {pendingMsg}
-          </div>
-        )}
-
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {(!isLogin && isInvited) && (
-            <div style={{ position: 'relative' }}>
-              <User size={18} color="var(--text-muted)" style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: '12px' }} />
-              <input 
-                type="text" 
-                placeholder="Full Name" 
-                required 
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                style={{ width: '100%', paddingLeft: '40px', boxSizing: 'border-box' }}
-              />
-            </div>
-          )}
-
           <div style={{ position: 'relative' }}>
-            <Mail size={18} color="var(--text-muted)" style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: '12px' }} />
+            <Mail size={18} color="var(--text-muted)" style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: '12px', pointerEvents: 'none' }} />
             <input 
               type="email" 
               placeholder="Email Address" 
@@ -138,11 +118,12 @@ function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               style={{ width: '100%', paddingLeft: '40px', boxSizing: 'border-box' }}
+              autoComplete="email"
             />
           </div>
 
           <div style={{ position: 'relative' }}>
-            <Lock size={18} color="var(--text-muted)" style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: '12px' }} />
+            <Lock size={18} color="var(--text-muted)" style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: '12px', pointerEvents: 'none' }} />
             <input 
               type="password" 
               placeholder="Password" 
@@ -150,44 +131,29 @@ function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               style={{ width: '100%', paddingLeft: '40px', boxSizing: 'border-box' }}
+              autoComplete="current-password"
             />
           </div>
 
-          {(!isLogin && isInvited) && (
-            <div style={{ position: 'relative' }}>
-              <Shield size={18} color="var(--text-muted)" style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: '12px' }} />
-              <select id="teamPref" style={{ width: '100%', paddingLeft: '40px', boxSizing: 'border-box', appearance: 'none', background: 'rgba(255,255,255,0.9)', color: 'var(--text-primary)' }} required defaultValue="">
-                <option value="" disabled>Select Team Preference</option>
-                <option value="Technical Support">Technical Support</option>
-                <option value="Event Management">Event Management</option>
-                <option value="Startup & Innovation">Startup & Innovation</option>
-                <option value="Corporate Relations">Corporate Relations</option>
-                <option value="Public Relations">Public Relations</option>
-                <option value="Social Media & Branding">Social Media & Branding</option>
-              </select>
-            </div>
-          )}
-
-          <Button type="submit" variant="primary" style={{ marginTop: '1rem', width: '100%', padding: '14px', fontSize: '1.05rem', fontWeight: '600', letterSpacing: '0.5px', boxShadow: '0 10px 20px -10px rgba(249, 115, 22, 0.5)' }} disabled={loading}>
-            {loading ? 'Processing...' : (isLogin ? 'Sign In to Portal' : 'Submit Join Request')}
+          <Button 
+            type="submit" 
+            variant="primary" 
+            disabled={loading}
+            style={{ marginTop: '0.5rem', width: '100%', padding: '14px', fontSize: '1rem', fontWeight: '600', boxShadow: '0 10px 20px -10px rgba(249, 115, 22, 0.5)' }}
+          >
+            {loading ? 'Signing in...' : 'Sign In to Portal'}
           </Button>
-          
-          {isInvited && (
-            <button 
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', fontSize: '0.85rem', cursor: 'pointer', marginTop: '10px' }}
-            >
-              {isLogin ? "Don't have an account? Request Access" : "Already have an account? Login"}
-            </button>
-          )}
         </form>
 
-        {isLogin && (
-          <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-            <a href="#" style={{ color: 'var(--accent-primary)', fontSize: '0.9rem', textDecoration: 'none', transition: 'color 0.2s' }}>Forgot your password?</a>
+        {/* Info box */}
+        <div style={{ marginTop: '1.5rem', padding: '12px', background: 'rgba(99,102,241,0.05)', borderRadius: '10px', border: '1px solid rgba(99,102,241,0.15)' }}>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+            <Info size={14} color="#6366F1" style={{ flexShrink: 0, marginTop: '2px' }} />
+            <p style={{ margin: 0, fontSize: '0.78rem', color: '#4338CA', lineHeight: '1.5' }}>
+              Access is granted by the Chair. Contact your admin if you cannot login.
+            </p>
           </div>
-        )}
+        </div>
       </Card>
     </div>
   );
