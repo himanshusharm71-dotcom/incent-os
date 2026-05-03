@@ -5,7 +5,11 @@ import { Badge } from '../components/ui/Badge';
 import { Avatar } from '../components/ui/Avatar';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
-import { CheckCircle, Clock, Users, Activity, Crown, Star, Award, Shield, Calendar, FileText, MessageSquare } from 'lucide-react';
+import { 
+  CheckCircle, Clock, Users, Activity, Crown, Star, Award, 
+  Shield, Calendar, FileText, MessageSquare, Terminal, 
+  Settings, Zap, AlertCircle, BarChart3
+} from 'lucide-react';
 import himanshuImg from '../assets/himanshu_sharma.jpg';
 import pratishImg from '../assets/pratish_rawat.jpg';
 import adityaImg from '../assets/aditya_kapoor.jpg';
@@ -76,7 +80,7 @@ function Dashboard() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ totalMembers: 0, tasksCompleted: 0, pendingTasks: 0, avgPerformance: 0, recentUsers: [] });
-  const [recentActivity, setRecentActivity] = useState([]);
+  const isAdmin = user?.role === 'super_admin' || user?.role === 'admin';
 
   useEffect(() => {
     fetchDashboardData();
@@ -85,7 +89,7 @@ function Dashboard() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const isTeamRestricted = user?.role !== 'super_admin' && user?.role !== 'admin';
+      const isTeamRestricted = !isAdmin;
       
       let userQuery = supabase.from('users').select('*', { count: 'exact', head: true });
       if (isTeamRestricted && user?.team) userQuery = userQuery.eq('team', user.team);
@@ -108,17 +112,6 @@ function Dashboard() {
         recentUsers: allUsers || []
       });
 
-      let actQuery = supabase.from('tasks').select('*').order('created_at', { ascending: false }).limit(5);
-      if (isTeamRestricted && user?.team) actQuery = actQuery.eq('team', user.team);
-      const { data: recentTasks } = await actQuery;
-
-      const recent = (recentTasks || []).map((t, i) => ({
-        id: i + 1,
-        text: `Task "${t.title}" — ${t.status} (${t.assigned_to || 'Unassigned'})`,
-        time: t.created_at ? new Date(t.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'Now'
-      }));
-      setRecentActivity(recent.length > 0 ? recent : [{ id: 1, text: 'No recent activity recorded.', time: 'Now' }]);
-
     } catch (err) {
       console.error('Dashboard error:', err);
     } finally {
@@ -126,7 +119,7 @@ function Dashboard() {
     }
   };
 
-  if (loading) return <div style={{ padding: '3rem', textAlign: 'center', color: '#fff' }}>Loading Operating System...</div>;
+  if (loading) return <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--accent-primary)', fontWeight: '700' }}>INITIALIZING INCENT OS KERNEL...</div>;
 
   const getUserPoints = (name) => {
     const u = stats.recentUsers.find(user => user.Name?.toLowerCase().includes(name.toLowerCase()));
@@ -144,64 +137,128 @@ function Dashboard() {
     .filter(u => isAdmin ? true : u.team === user?.team)
     .slice(0, 6);
 
-  const deputies = stats.recentUsers
-    .filter(u => u.role === 'deputy_leader')
-    .filter(u => isAdmin ? true : u.team === user?.team)
-    .slice(0, 6);
-
   return (
-    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-      <div style={{ padding: '2rem', background: 'linear-gradient(135deg, rgba(249,115,22,0.08) 0%, rgba(249,115,22,0.02) 100%)', borderRadius: '20px', border: '1px solid rgba(249,115,22,0.15)' }}>
-        <h1 style={{ margin: '0 0 4px', fontSize: '1.9rem', fontWeight: '800' }}>Welcome back, <span style={{ color: 'var(--accent-primary)' }}>{user?.Name || user?.name || 'Leader'}</span> 👋</h1>
-        <p style={{ margin: 0, color: 'var(--text-muted)' }}>{user?.role === 'super_admin' || user?.role === 'admin' ? "Full organization overview active." : `Team Overview: ${user?.team}`}</p>
+    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '4rem' }}>
+      
+      {/* Welcome & Banner */}
+      <div style={{ 
+        padding: '2.5rem', 
+        background: 'linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%)', 
+        borderRadius: '24px', 
+        color: '#fff',
+        position: 'relative',
+        overflow: 'hidden',
+        boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
+      }}>
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <Badge variant="primary" style={{ marginBottom: '1rem', background: 'rgba(249,115,22,0.2)', color: 'var(--accent-primary)' }}>System Operational</Badge>
+          <h1 style={{ margin: '0 0 8px', fontSize: '2.2rem', fontWeight: '800' }}>Welcome back, <span style={{ color: 'var(--accent-primary)' }}>{user?.Name?.split(' ')[0] || 'Leader'}</span></h1>
+          <p style={{ margin: 0, opacity: 0.7, fontSize: '1.1rem' }}>{isAdmin ? "INCENT OS Executive Command active." : `Accessing ${user?.team} Portal.`}</p>
+        </div>
+        <Zap size={150} color="var(--accent-primary)" style={{ position: 'absolute', right: '-20px', bottom: '-20px', opacity: 0.1, transform: 'rotate(-15deg)' }} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '1rem' }}>
-        {[
-          { name: 'Directory', icon: Users, path: '/team', color: '#6366F1' },
-          { name: 'Tasks', icon: CheckCircle, path: '/tasks', color: '#10B981' },
-          { name: 'Meetings', icon: Calendar, path: '/meetings', color: '#F59E0B' },
-          { name: 'Drive', icon: FileText, path: '/files', color: '#3B82F6' },
-          { name: 'Chat', icon: MessageSquare, path: '/communication', color: 'var(--accent-primary)' },
-          { name: 'Analytics', icon: Activity, path: '/analytics', color: '#EC4899' },
-        ].map((app, i) => (
-          <div key={i} onClick={() => navigate(app.path)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', padding: '1.25rem 1rem', background: 'var(--bg-card)', borderRadius: '16px', border: '1px solid var(--border-light)', cursor: 'pointer', transition: 'all 0.2s', textAlign: 'center' }}>
-            <div style={{ width: 44, height: 44, borderRadius: '12px', background: `${app.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><app.icon size={22} color={app.color} /></div>
-            <span style={{ fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-secondary)' }}>{app.name}</span>
+      {/* Admin Command Center (Exclusive to Chair/Admins) */}
+      {isAdmin && (
+        <Card style={{ border: '2.5px solid var(--accent-primary)', background: 'rgba(249,115,22,0.02)' }}>
+          <SectionTitle icon={Shield} label="Super Admin Command Center" color="var(--accent-primary)" />
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <p style={{ margin: 0, fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Kernel Status</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#10B981', fontWeight: '700', fontSize: '0.9rem' }}>
+                <Activity size={14} /> Database Online
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#10B981', fontWeight: '700', fontSize: '0.9rem' }}>
+                <Zap size={14} /> Latency: 24ms
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', gridColumn: 'span 2' }}>
+              {[
+                { label: 'Broadcast Message', icon: MessageSquare, path: '/communication', color: 'var(--accent-primary)' },
+                { label: 'Approval Queue', icon: AlertCircle, path: '/approvals', color: '#F59E0B' },
+                { label: 'Reset Points', icon: BarChart3, path: '/analytics', color: '#EF4444' },
+                { label: 'OS Settings', icon: Settings, path: '/settings', color: '#6366F1' },
+              ].map((btn, i) => (
+                <button key={i} onClick={() => navigate(btn.path)} style={{ 
+                  flex: 1, minWidth: '160px', padding: '12px', borderRadius: '12px', border: '1px solid var(--border-light)', 
+                  background: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', 
+                  fontSize: '0.85rem', fontWeight: '600', transition: '0.2s' 
+                }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.02)'} onMouseLeave={e => e.currentTarget.style.background = '#fff'}>
+                  <btn.icon size={16} color={btn.color} /> {btn.label}
+                </button>
+              ))}
+            </div>
           </div>
-        ))}
-      </div>
+        </Card>
+      )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+      {/* Main Stats Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
         {[
-          { label: user?.role === 'admin' || user?.role === 'super_admin' ? 'Total Members' : 'Team Members', value: stats.totalMembers, icon: Users, bg: 'rgba(249,115,22,0.1)', color: 'var(--accent-primary)' },
-          { label: 'Tasks Completed', value: stats.tasksCompleted, icon: CheckCircle, bg: 'rgba(16,185,129,0.1)', color: '#10B981' },
-          { label: 'Pending Tasks', value: stats.pendingTasks, icon: Clock, bg: 'rgba(245,158,11,0.1)', color: '#F59E0B' },
-          { label: 'Team Efficiency', value: `${stats.avgPerformance}%`, icon: Activity, bg: 'rgba(59,130,246,0.1)', color: '#3B82F6' },
+          { label: 'Total Members', value: stats.totalMembers, icon: Users, color: '#6366F1' },
+          { label: 'Tasks Done', value: stats.tasksCompleted, icon: CheckCircle, color: '#10B981' },
+          { label: 'Pending', value: stats.pendingTasks, icon: Clock, color: '#F59E0B' },
+          { label: 'Efficiency', value: `${stats.avgPerformance}%`, icon: Activity, color: '#3B82F6' },
         ].map((s, i) => (
-          <Card key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem' }}>
-            <div style={{ padding: '0.875rem', background: s.bg, borderRadius: '12px', flexShrink: 0 }}><s.icon size={22} color={s.color} /></div>
+          <Card key={i} style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+            <div style={{ width: 50, height: 50, borderRadius: '12px', background: `${s.color}15`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><s.icon size={24} color={s.color} /></div>
             <div>
-              <p style={{ margin: '0 0 2px', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '500' }}>{s.label}</p>
-              <h3 style={{ margin: 0, fontSize: '1.6rem', fontWeight: '800', color: 'var(--text-primary)' }}>{s.value}</h3>
+              <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: '600' }}>{s.label}</p>
+              <h3 style={{ margin: 0, fontSize: '1.7rem', fontWeight: '800' }}>{s.value}</h3>
             </div>
           </Card>
         ))}
       </div>
 
-      <Card>
-        <SectionTitle icon={Crown} label="Core Leadership" color="#F59E0B" />
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center' }}>
-          {executiveTeam.map((m, i) => <PersonCard key={i} person={m} size="lg" badgeVariant={m.role === 'super_admin' ? 'danger' : 'primary'} />)}
-        </div>
-      </Card>
+      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '2rem' }}>
+        {/* Leadership View */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          <Card>
+            <SectionTitle icon={Crown} label="Core Leadership" color="#F59E0B" />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
+              {executiveTeam.map((m, i) => <PersonCard key={i} person={m} size="lg" badgeVariant={m.role === 'super_admin' ? 'danger' : 'primary'} />)}
+            </div>
+          </Card>
 
-      <Card>
-        <SectionTitle icon={Award} label="Top Performers" />
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center' }}>
-          {teamLeaders.length > 0 ? teamLeaders.map((m, i) => <PersonCard key={i} person={m} size="md" />) : <p style={{ color: 'var(--text-muted)' }}>No data available.</p>}
+          <Card>
+            <SectionTitle icon={Award} label={isAdmin ? "Top Performers (Global)" : `Team Leaders: ${user?.team}`} />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center' }}>
+              {teamLeaders.length > 0 ? teamLeaders.map((m, i) => <PersonCard key={i} person={m} size="md" />) : <p style={{ color: 'var(--text-muted)' }}>No data in this wing.</p>}
+            </div>
+          </Card>
         </div>
-      </Card>
+
+        {/* Quick Launch & Activity */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          <Card>
+            <SectionTitle icon={Zap} label="System Launch" color="var(--accent-primary)" />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+              {[
+                { name: 'Directory', path: '/team', icon: Users, color: '#6366F1' },
+                { name: 'Task Board', path: '/tasks', icon: CheckCircle, color: '#10B981' },
+                { name: 'Calendar', path: '/calendar', icon: Calendar, color: '#F59E0B' },
+                { name: 'Files', path: '/files', icon: FileText, color: '#3B82F6' },
+              ].map((app, i) => (
+                <div key={i} onClick={() => navigate(app.path)} style={{ 
+                  padding: '12px', borderRadius: '12px', border: '1px solid var(--border-light)', cursor: 'pointer', 
+                  display: 'flex', alignItems: 'center', gap: '10px', fontSize: '0.85rem', fontWeight: '600' 
+                }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.03)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                  <app.icon size={16} color={app.color} /> {app.name}
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card style={{ flex: 1 }}>
+            <SectionTitle icon={Activity} label="Live Feed" />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ padding: '1rem', background: 'rgba(0,0,0,0.02)', borderRadius: '12px', border: '1px dashed var(--border-light)', textAlign: 'center', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                Monitoring real-time kernel activity...
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

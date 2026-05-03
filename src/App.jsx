@@ -14,6 +14,7 @@ import Analytics from "./pages/Analytics";
 import ApprovalQueue from "./pages/ApprovalQueue";
 import AuditLog from "./pages/AuditLog";
 import Calendar from "./pages/Calendar";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="/files" element={<Files />} />
           <Route path="/communication" element={<Communication />} />
           <Route path="/calendar" element={<Calendar />} />
+          <Route path="/settings" element={<Settings />} />
           
           {/* Admin Only Routes */}
           <Route path="/analytics" element={<ProtectedRoute requireAdmin={true}><Analytics /></ProtectedRoute>} />
