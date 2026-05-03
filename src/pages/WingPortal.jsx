@@ -50,7 +50,7 @@ function WingPortal({ preview = false }) {
 
   const leader = stats.members.find(m => m.role === 'leader');
 
-  if (loading) return <div style={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: config.color, fontWeight: '900', letterSpacing: '2px' }}>ACCESSING {user?.team?.toUpperCase()} WING...</div>;
+  if (loading) return <div style={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: config.color, fontWeight: '900', letterSpacing: '2px' }}>ACCESSING {(user?.team || 'Portal').toUpperCase()}...</div>;
 
   return (
     <div className="animate-fade-in perspective-container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '6rem' }}>
