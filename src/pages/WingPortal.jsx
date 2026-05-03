@@ -7,7 +7,7 @@ import { Avatar } from '../components/ui/Avatar';
 import { Button } from '../components/ui/Button';
 import { 
   ExternalLink, Users, CheckSquare, MessageSquare, 
-  Video, FolderOpen, Star, Zap, Clock, Rocket, Target, Globe, Calendar, Box
+  Video, FolderOpen, Star, Zap, Clock, Rocket, Target, Globe, Calendar, Box, Megaphone
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -24,12 +24,15 @@ function WingPortal() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [stats, setStats] = useState({ tasks: [], members: [], nextMeeting: null });
+  const [announcement, setAnnouncement] = useState("System operational. Welcome to your wing.");
   const [loading, setLoading] = useState(true);
 
   const config = TEAM_CONFIG[user?.team] || { color: '#F97316', icon: Users, drive: '#', desc: 'Central Operations Hub' };
 
   useEffect(() => {
     if (user?.team) fetchPortalData();
+    const saved = localStorage.getItem('chair_announcement');
+    if (saved) setAnnouncement(saved);
   }, [user]);
 
   const fetchPortalData = async () => {
@@ -50,42 +53,33 @@ function WingPortal() {
   return (
     <div className="animate-fade-in perspective-container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '6rem' }}>
       
-      {/* 3D Wing Header (Light Mode) */}
+      {/* GLOBAL CHAIR ANNOUNCEMENT FOR WING MEMBERS */}
+      <div style={{ background: 'var(--accent-primary)', color: '#fff', padding: '10px 20px', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '15px', boxShadow: '0 8px 25px rgba(249,115,22,0.15)' }}>
+        <Megaphone size={18} color="#fff" style={{ flexShrink: 0 }} />
+        <marquee style={{ fontSize: '0.9rem', fontWeight: '700' }}>{announcement}</marquee>
+      </div>
+
       <div className="card-3d floating" style={{ 
-        padding: '4rem 2.5rem', 
+        padding: '3rem 2.5rem', 
         background: `linear-gradient(135deg, #fff 0%, ${config.color}08 100%)`, 
         borderRadius: '32px', 
         border: `1px solid ${config.color}20`,
         position: 'relative',
-        overflow: 'hidden',
-        boxShadow: '0 20px 40px rgba(0,0,0,0.02)'
+        overflow: 'hidden'
       }}>
         <div style={{ position: 'relative', zIndex: 2 }}>
           <Badge variant="primary" style={{ marginBottom: '1.25rem', background: config.color, color: '#fff', border: 'none', padding: '6px 14px' }}>
-            {user?.team?.toUpperCase()} WING
+            {user?.team?.toUpperCase()} COMMAND
           </Badge>
           <h1 style={{ margin: '0 0 8px', fontSize: '3.5rem', fontWeight: '900', color: 'var(--text-primary)', letterSpacing: '-2.5px' }}>
             {user?.team?.split(' ')[0]} <span style={{ color: config.color }}>Portal</span>
           </h1>
           <p style={{ margin: 0, opacity: 0.9, fontSize: '1.1rem', maxWidth: '600px', color: 'var(--text-secondary)' }}>{config.desc}</p>
-          
-          <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <a href={config.drive} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-              <Button style={{ background: config.color, color: '#fff', fontWeight: '800', padding: '14px 28px' }} icon={<FolderOpen size={20} />}>
-                Team Drive
-              </Button>
-            </a>
-            <Button variant="secondary" onClick={() => navigate('/communication')} style={{ background: 'rgba(0,0,0,0.03)', color: 'var(--text-primary)', border: '1px solid var(--border-light)' }} icon={<MessageSquare size={18} />}>
-              Wing Chat
-            </Button>
-          </div>
         </div>
         <config.icon size={250} color={config.color} style={{ position: 'absolute', right: '-40px', top: '-40px', opacity: 0.05, transform: 'rotate(-15deg)' }} />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-        
-        {/* Personnel Card */}
         <Card className="card-3d" style={{ background: '#fff' }}>
           <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
             <Users size={20} color={config.color} /> Personnel Command
@@ -95,14 +89,12 @@ function WingPortal() {
               <Avatar src={`https://ui-avatars.com/api/?name=${encodeURIComponent(leader.Name)}&background=${config.color.replace('#','')}&color=fff`} size="lg" />
               <div>
                 <h4 style={{ margin: 0, fontSize: '1.1rem' }}>{leader.Name}</h4>
-                <p style={{ margin: '2px 0 8px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>Wing Leader</p>
                 <Badge style={{ background: `${config.color}15`, color: config.color }}>{leader.points || 0} pts</Badge>
               </div>
             </div>
           ) : <p style={{ color: 'var(--text-muted)' }}>Leader not assigned.</p>}
         </Card>
 
-        {/* Operations Card */}
         <Card className="card-3d" style={{ background: '#fff' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
             <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -113,38 +105,11 @@ function WingPortal() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
             {stats.tasks.map(t => (
               <div key={t.id} style={{ padding: '12px', background: 'rgba(0,0,0,0.01)', border: '1px solid var(--border-light)', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <p style={{ margin: 0, fontWeight: '700', fontSize: '0.9rem' }}>{t.title}</p>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t.assignedTo}</span>
-                </div>
+                <p style={{ margin: 0, fontWeight: '700', fontSize: '0.9rem' }}>{t.title}</p>
                 <Badge variant={t.priority === 'High' ? 'danger' : 'warning'} size="sm">{t.priority}</Badge>
               </div>
             ))}
           </div>
-        </Card>
-
-        {/* Sync Center Card */}
-        <Card className="card-3d" style={{ background: '#fff' }}>
-          <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Video size={20} color={config.color} /> Sync Center
-          </h3>
-          {stats.nextMeeting ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-              <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-                <div style={{ padding: '10px', background: config.color, color: '#fff', borderRadius: '15px', textAlign: 'center', minWidth: '60px' }}>
-                  <div style={{ fontSize: '0.7rem', fontWeight: '900' }}>{new Date(stats.nextMeeting.date).toLocaleString('default', { month: 'short' }).toUpperCase()}</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '900' }}>{new Date(stats.nextMeeting.date).getDate()}</div>
-                </div>
-                <div>
-                  <h4 style={{ margin: '0 0 4px', fontSize: '1rem' }}>{stats.nextMeeting.title}</h4>
-                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    <Clock size={14} /> {stats.nextMeeting.time}
-                  </p>
-                </div>
-              </div>
-              <Button style={{ width: '100%', background: config.color, color: '#fff', fontWeight: '700' }} onClick={() => navigate('/meetings')}>Initialize Call</Button>
-            </div>
-          ) : <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>No syncs scheduled.</p>}
         </Card>
       </div>
     </div>

@@ -8,7 +8,7 @@ import { useAuth } from '../context/AuthProvider';
 import { 
   CheckCircle, Clock, Users, Activity, Crown, Star, Award, 
   Shield, Calendar, FileText, MessageSquare, Terminal, 
-  Settings, Zap, AlertCircle, BarChart3, Rocket, Target, Globe, Box
+  Settings, Zap, AlertCircle, BarChart3, Rocket, Target, Globe, Box, Megaphone, Send
 } from 'lucide-react';
 import himanshuImg from '../assets/himanshu_sharma.jpg';
 import pratishImg from '../assets/pratish_rawat.jpg';
@@ -65,10 +65,14 @@ function Dashboard() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ totalMembers: 0, tasksCompleted: 0, pendingTasks: 0, avgPerformance: 0, recentUsers: [] });
+  const [announcement, setAnnouncement] = useState("Welcome to INCENT OS. Access granted to all wings.");
+  const [newMsg, setNewMsg] = useState("");
   const isAdmin = user?.role === 'super_admin' || user?.role === 'admin';
 
   useEffect(() => {
     fetchDashboardData();
+    const saved = localStorage.getItem('chair_announcement');
+    if (saved) setAnnouncement(saved);
   }, [user]);
 
   const fetchDashboardData = async () => {
@@ -91,6 +95,14 @@ function Dashboard() {
     } catch (err) { console.error(err); } finally { setLoading(false); }
   };
 
+  const handleBroadcast = () => {
+    if (!newMsg) return;
+    setAnnouncement(newMsg);
+    localStorage.setItem('chair_announcement', newMsg);
+    setNewMsg("");
+    alert("Global Broadcast Updated!");
+  };
+
   const executiveTeam = [
     { Name: 'Himanshu Sharma', role: 'super_admin' },
     { Name: 'Pratish Rawat', role: 'admin' },
@@ -111,11 +123,15 @@ function Dashboard() {
   return (
     <div className="animate-fade-in perspective-container" style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', paddingBottom: '6rem' }}>
       
-      {/* 3D Hero Section (Light Mode) */}
+      {/* GLOBAL ANNOUNCEMENT MARQUEE */}
+      <div style={{ background: 'var(--accent-primary)', color: '#fff', padding: '12px', borderRadius: '16px', overflow: 'hidden', display: 'flex', alignItems: 'center', gap: '20px', boxShadow: '0 10px 30px rgba(249,115,22,0.2)' }}>
+        <Badge variant="primary" style={{ background: '#fff', color: 'var(--accent-primary)', border: 'none', fontWeight: '900', flexShrink: 0 }}>CHAIR'S BROADCAST</Badge>
+        <marquee style={{ fontSize: '1rem', fontWeight: '700' }}>{announcement}</marquee>
+      </div>
+
       <div className="card-3d floating" style={{ 
         padding: '3.5rem 2.5rem', background: 'linear-gradient(135deg, #fff 0%, rgba(249,115,22,0.05) 100%)', 
-        borderRadius: '32px', border: '1px solid var(--border-light)', position: 'relative', overflow: 'hidden',
-        boxShadow: '0 20px 40px rgba(0,0,0,0.03)'
+        borderRadius: '32px', border: '1px solid var(--border-light)', position: 'relative', overflow: 'hidden'
       }}>
         <div style={{ position: 'relative', zIndex: 2 }}>
           <Badge variant="primary" style={{ marginBottom: '1.25rem', padding: '6px 16px' }}>CHAIR EXECUTIVE COMMAND</Badge>
@@ -128,6 +144,26 @@ function Dashboard() {
         </div>
         <Box size={200} color="var(--accent-primary)" style={{ position: 'absolute', right: '0', top: '-20px', opacity: 0.05, transform: 'rotate(20deg)' }} />
       </div>
+
+      {/* CHAIR'S BROADCAST CONTROL (ADMIN ONLY) */}
+      {isAdmin && (
+        <Card style={{ border: '2px solid var(--accent-primary)', background: 'rgba(249,115,22,0.02)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
+            <Megaphone size={20} color="var(--accent-primary)" />
+            <h3 style={{ margin: 0 }}>Update Global Broadcast</h3>
+          </div>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <input 
+              type="text" 
+              placeholder="Type your announcement for all 71 members..." 
+              value={newMsg}
+              onChange={(e) => setNewMsg(e.target.value)}
+              style={{ flex: 1 }}
+            />
+            <Button onClick={handleBroadcast} icon={<Send size={18} />} style={{ background: 'var(--accent-primary)', color: '#fff' }}>Broadcast Now</Button>
+          </div>
+        </Card>
+      )}
 
       {/* Admin Portal Switcher */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -152,7 +188,6 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Global Stats Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1.5rem' }}>
         {[
           { label: 'Personnel', value: stats.totalMembers, icon: Users, color: '#6366F1' },
@@ -168,17 +203,6 @@ function Dashboard() {
             <h3 style={{ margin: 0, fontSize: '1.8rem', fontWeight: '900', color: 'var(--text-primary)' }}>{s.value}</h3>
           </Card>
         ))}
-      </div>
-
-      {/* Leadership Command */}
-      <div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '1.5rem' }}>
-          <Crown size={24} color="#F59E0B" />
-          <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: '800' }}>Global Command</h2>
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', justifyContent: 'center' }}>
-          {executiveTeam.map((m, i) => <PersonCard key={i} person={m} size="lg" badgeVariant={m.role === 'super_admin' ? 'danger' : 'primary'} />)}
-        </div>
       </div>
     </div>
   );
