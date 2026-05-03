@@ -7,7 +7,7 @@ import { Avatar } from '../components/ui/Avatar';
 import { Button } from '../components/ui/Button';
 import { 
   ExternalLink, Users, CheckSquare, MessageSquare, 
-  Video, FolderOpen, Star, Zap, Clock, Rocket, Target, Globe, Calendar, Box, Megaphone
+  Video, FolderOpen, Star, Zap, Clock, Rocket, Target, Globe, Calendar, Box, Megaphone, Shield
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
