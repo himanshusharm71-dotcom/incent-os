@@ -3,9 +3,4 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  build: {
-    target: 'esnext',
-    minify: 'oxc',
-    chunkSizeWarningLimit: 1000,
-  },
 })
