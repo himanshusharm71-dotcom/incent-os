@@ -179,8 +179,11 @@ function Dashboard() {
                   <wing.icon size={24} color={wing.color} />
                 </div>
                 <h4 style={{ margin: 0, fontSize: '0.95rem' }}>{wing.name}</h4>
-                <button style={{ background: wing.color, color: '#fff', width: '100%', marginTop: '10px', padding: '8px', border: 'none', borderRadius: '10px', fontWeight: '700', cursor: 'pointer', fontSize: '0.8rem' }} onClick={() => navigate('/')}>
-                  Enter Portal
+                <button 
+                  style={{ background: wing.color, color: '#fff', width: '100%', marginTop: '10px', padding: '8px', border: 'none', borderRadius: '10px', fontWeight: '700', cursor: 'pointer', fontSize: '0.8rem' }} 
+                  onClick={() => navigate(`/portal/${wing.name}`)}
+                >
+                  Enter Portal Preview
                 </button>
               </div>
             </Card>

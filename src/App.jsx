@@ -34,6 +34,7 @@ function App() {
         {/* Protected Routes with Layout wrapper */}
         <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route path="/" element={<Home />} />
+          <Route path="/portal/:teamName" element={<WingPortal preview={true} />} />
           <Route path="/team" element={<Team />} />
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/leaderboard" element={<Leaderboard />} />

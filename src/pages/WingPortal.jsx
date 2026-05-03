@@ -9,7 +9,7 @@ import {
   ExternalLink, Users, CheckSquare, MessageSquare, 
   Video, FolderOpen, Star, Zap, Clock, Rocket, Target, Globe, Calendar, Box, Megaphone
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const TEAM_CONFIG = {
   'Technical Support': { color: '#3B82F6', icon: Zap, drive: 'https://drive.google.com/drive/folders/tech', desc: 'Digital Core & Systems Management' },
@@ -20,27 +20,29 @@ const TEAM_CONFIG = {
   'Social Media & Branding': { color: '#06B6D4', icon: MessageSquare, drive: 'https://drive.google.com/drive/folders/branding', desc: 'Creative Vision & Visual Identity' }
 };
 
-function WingPortal() {
+function WingPortal({ preview = false }) {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { teamName } = useParams();
   const [stats, setStats] = useState({ tasks: [], members: [], nextMeeting: null });
   const [announcement, setAnnouncement] = useState("System operational. Welcome to your wing.");
   const [loading, setLoading] = useState(true);
 
-  const config = TEAM_CONFIG[user?.team] || { color: '#F97316', icon: Users, drive: '#', desc: 'Central Operations Hub' };
+  const targetTeam = preview ? teamName : user?.team;
+  const config = TEAM_CONFIG[targetTeam] || { color: '#F97316', icon: Users, drive: '#', desc: 'Central Operations Hub' };
 
   useEffect(() => {
-    if (user?.team) fetchPortalData();
+    if (targetTeam) fetchPortalData();
     const saved = localStorage.getItem('chair_announcement');
     if (saved) setAnnouncement(saved);
-  }, [user]);
+  }, [targetTeam]);
 
   const fetchPortalData = async () => {
     try {
       setLoading(true);
-      const { data: members } = await supabase.from('users').select('*').eq('team', user.team).eq('status', 'active');
-      const { data: tasks } = await supabase.from('tasks').select('*').eq('team', user.team).order('created_at', { ascending: false }).limit(4);
-      const { data: meetings } = await supabase.from('meetings').select('*').eq('team', user.team).gte('date', new Date().toISOString().split('T')[0]).order('date', { ascending: true }).limit(1);
+      const { data: members } = await supabase.from('users').select('*').eq('team', targetTeam).eq('status', 'active');
+      const { data: tasks } = await supabase.from('tasks').select('*').eq('team', targetTeam).order('created_at', { ascending: false }).limit(4);
+      const { data: meetings } = await supabase.from('meetings').select('*').eq('team', targetTeam).gte('date', new Date().toISOString().split('T')[0]).order('date', { ascending: true }).limit(1);
 
       setStats({ members: members || [], tasks: tasks || [], nextMeeting: meetings?.[0] || null });
     } catch (err) { console.error(err); } finally { setLoading(false); }
@@ -53,6 +55,17 @@ function WingPortal() {
   return (
     <div className="animate-fade-in perspective-container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '6rem' }}>
       
+      {/* ADMIN PREVIEW HEADER */}
+      {preview && (
+        <div style={{ background: '#1e1e1e', color: '#fff', padding: '12px 24px', borderRadius: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', border: '1px solid var(--accent-primary)', boxShadow: '0 10px 30px rgba(0,0,0,0.1)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Shield size={20} color="var(--accent-primary)" />
+            <span style={{ fontWeight: '800', fontSize: '0.9rem' }}>ADMIN PREVIEW MODE: <span style={{ color: config.color }}>{targetTeam}</span></span>
+          </div>
+          <Button size="sm" onClick={() => navigate('/')} style={{ background: 'var(--accent-primary)', color: '#fff' }}>Return to Mission Control</Button>
+        </div>
+      )}
+
       {/* GLOBAL CHAIR ANNOUNCEMENT FOR WING MEMBERS */}
       <div style={{ background: 'var(--accent-primary)', color: '#fff', padding: '10px 20px', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '15px', boxShadow: '0 8px 25px rgba(249,115,22,0.15)' }}>
         <Megaphone size={18} color="#fff" style={{ flexShrink: 0 }} />
