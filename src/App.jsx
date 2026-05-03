@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { useAuth } from "./context/AuthProvider";
 
 import Dashboard from "./pages/Dashboard";
 import Team from "./pages/Team";
@@ -15,6 +16,13 @@ import ApprovalQueue from "./pages/ApprovalQueue";
 import AuditLog from "./pages/AuditLog";
 import Calendar from "./pages/Calendar";
 import Settings from "./pages/Settings";
+import WingPortal from "./pages/WingPortal";
+
+function Home() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'super_admin' || user?.role === 'admin';
+  return isAdmin ? <Dashboard /> : <WingPortal />;
+}
 
 function App() {
   return (
@@ -25,7 +33,7 @@ function App() {
         
         {/* Protected Routes with Layout wrapper */}
         <Route element={<ProtectedRoute><Layout /></ProtectedRoute>}>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<Home />} />
           <Route path="/team" element={<Team />} />
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/leaderboard" element={<Leaderboard />} />

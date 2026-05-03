@@ -1,6 +1,10 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, CheckSquare, Trophy, Calendar, FileText, MessageSquare, Settings, LogOut, Shield, Video } from 'lucide-react';
+import { 
+  LayoutDashboard, Users, CheckSquare, Trophy, Calendar, 
+  FileText, MessageSquare, Settings, LogOut, Shield, Video, 
+  Zap, FolderOpen 
+} from 'lucide-react';
 import { Avatar } from './ui/Avatar';
 import { Badge } from './ui/Badge';
 import { useAuth } from '../context/AuthProvider';
@@ -22,126 +26,80 @@ export function Sidebar({ className = '', onNavClick }) {
 
   const role = user?.role || 'member';
   const isAdmin = role === 'super_admin' || role === 'admin';
-  const isLeaderOrAbove = isAdmin || role === 'leader' || role === 'deputy_leader';
 
-  // Common pages — everyone can see
   const navItems = [
-    { name: 'Dashboard', path: '/', icon: LayoutDashboard },
-    { name: 'Team', path: '/team', icon: Users },
-    { name: 'Tasks', path: '/tasks', icon: CheckSquare },
+    { name: isAdmin ? 'Dashboard' : 'Team Portal', path: '/', icon: LayoutDashboard },
+    { name: 'Wing Directory', path: '/team', icon: Users },
+    { name: 'Task Board', path: '/tasks', icon: CheckSquare },
     { name: 'Leaderboard', path: '/leaderboard', icon: Trophy },
     { name: 'Meetings', path: '/meetings', icon: Video },
     { name: 'Calendar', path: '/calendar', icon: Calendar },
-    { name: 'Cloud Drive', path: '/files', icon: FileText },
+    { name: 'Cloud Drive', path: '/files', icon: FolderOpen },
     { name: 'Communication', path: '/communication', icon: MessageSquare },
   ];
 
-  // Admin-only pages
   const adminItems = [
-    { name: 'User Management', path: '/approvals', icon: Shield },
-    { name: 'System Analytics', path: '/analytics', icon: Settings },
-    { name: 'Audit Log', path: '/audit', icon: FileText },
+    { name: 'Kernel Analytics', path: '/analytics', icon: Zap },
+    { name: 'Access Control', path: '/approvals', icon: Shield },
+    { name: 'Audit Logs', path: '/audit', icon: FileText },
   ];
 
   return (
-    <aside className={className} style={{
-      width: '260px',
-      backgroundColor: 'var(--bg-card)',
-      borderRight: '1px solid var(--border-light)',
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100vh',
-      position: 'fixed',
-      left: 0,
-      top: 0,
-      backdropFilter: 'blur(10px)',
-      zIndex: 10
-    }}>
-      {/* Logo Area */}
-      <div style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <img src={logoImg} alt="INCENT Logo" style={{ width: '40px', height: '40px', objectFit: 'contain', borderRadius: '4px' }} />
-        <h2 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
-          INCENT OS
-        </h2>
+    <aside className={`sidebar ${className}`}>
+      <div className="sidebar-header" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '1.5rem' }}>
+        <img src={logoImg} alt="Logo" style={{ width: '40px', height: '40px', borderRadius: '10px' }} />
+        <div>
+          <h1 style={{ fontSize: '1.1rem', fontWeight: '800', margin: 0, letterSpacing: '-0.5px' }}>INCENT OS</h1>
+          <Badge variant="primary" style={{ fontSize: '0.6rem', padding: '2px 6px' }}>v3.0.4</Badge>
+        </div>
       </div>
 
-      {/* Navigation */}
-      <nav style={{ flex: 1, padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto' }}>
-        <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.5rem', marginTop: '1rem', letterSpacing: '1px' }}>Menu</div>
-        
-        {navItems.map((item) => (
-          <NavLink 
-            key={item.name} 
-            to={item.path}
-            style={({ isActive }) => ({
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              padding: '0.75rem 1rem',
-              borderRadius: '8px',
-              color: isActive ? 'var(--accent-secondary)' : 'var(--text-secondary)',
-              background: isActive ? 'rgba(249, 115, 22, 0.1)' : 'transparent',
-              textDecoration: 'none',
-              transition: 'all 0.2s',
-              fontWeight: isActive ? '600' : '500',
-              borderLeft: isActive ? '3px solid var(--accent-primary)' : '3px solid transparent'
-            })}
-          >
-            <item.icon size={18} color="currentColor" />
-            <span>{item.name}</span>
-          </NavLink>
-        ))}
+      <nav className="sidebar-nav">
+        <div className="nav-section">
+          <p className="nav-section-title">SYSTEM MENU</p>
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              onClick={onNavClick}
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            >
+              <item.icon size={20} />
+              <span>{item.name}</span>
+            </NavLink>
+          ))}
+        </div>
 
         {isAdmin && (
-          <>
-            <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.5rem', marginTop: '1.5rem', letterSpacing: '1px' }}>Admin</div>
+          <div className="nav-section" style={{ marginTop: '1.5rem' }}>
+            <p className="nav-section-title">ADMINISTRATOR</p>
             {adminItems.map((item) => (
-              <NavLink 
-                key={item.name} 
+              <NavLink
+                key={item.path}
                 to={item.path}
-                onClick={() => { if(onNavClick) onNavClick(); }}
-                style={({ isActive }) => ({
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '12px',
-                  padding: '0.75rem 1rem',
-                  borderRadius: '8px',
-                  color: isActive ? 'var(--accent-secondary)' : 'var(--text-secondary)',
-                  background: isActive ? 'rgba(249, 115, 22, 0.1)' : 'transparent',
-                  textDecoration: 'none',
-                  transition: 'all 0.2s',
-                  fontWeight: isActive ? '600' : '500',
-                  borderLeft: isActive ? '3px solid var(--accent-primary)' : '3px solid transparent'
-                })}
+                onClick={onNavClick}
+                className={({ isActive }) => `nav-item admin ${isActive ? 'active' : ''}`}
               >
-                <item.icon size={18} />
+                <item.icon size={20} />
                 <span>{item.name}</span>
               </NavLink>
             ))}
-          </>
+          </div>
         )}
       </nav>
 
-      {/* User Profile */}
-      <div style={{ padding: '1rem', borderTop: '1px solid var(--border-light)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <img
-          src={getLeadershipImage(user?.Name || user?.name)}
-          alt={user?.Name || 'User'}
-          style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--accent-primary)' }}
-          onError={e => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.Name || 'U')}&background=F97316&color=fff`; }}
-        />
-        <div style={{ flex: 1, overflow: 'hidden' }}>
-          <p style={{ margin: 0, fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.9rem', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
-            {user?.Name || user?.name || 'User'}
-          </p>
-          <Badge variant={user?.role === 'super_admin' ? 'danger' : 'primary'} style={{ marginTop: '4px', fontSize: '0.65rem', textTransform: 'uppercase' }}>
-            {user?.role?.replace('_', ' ') || 'member'}
-          </Badge>
+      <div className="sidebar-footer">
+        <div className="user-profile" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px', background: 'rgba(0,0,0,0.03)', borderRadius: '16px' }}>
+          <Avatar src={getLeadershipImage(user?.Name)} size="sm" />
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: '700', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.Name || 'User'}</p>
+            <p style={{ margin: 0, fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>{user?.role?.replace('_', ' ') || 'Member'}</p>
+          </div>
+          <button onClick={logout} className="logout-btn" title="Logout">
+            <LogOut size={16} />
+          </button>
         </div>
-        <LogOut onClick={logout} size={18} color="var(--text-muted)" style={{ cursor: 'pointer', flexShrink: 0 }} title="Logout" />
       </div>
     </aside>
   );
 }
-
-export default Sidebar;
