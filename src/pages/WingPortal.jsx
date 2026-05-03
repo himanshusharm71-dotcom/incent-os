@@ -7,17 +7,17 @@ import { Avatar } from '../components/ui/Avatar';
 import { Button } from '../components/ui/Button';
 import { 
   ExternalLink, Users, CheckSquare, MessageSquare, 
-  Video, FolderOpen, Star, Zap, Clock 
+  Video, FolderOpen, Star, Zap, Clock, Rocket, Target, Globe
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const TEAM_DRIVE_LINKS = {
-  'Technical Support': 'https://drive.google.com/drive/folders/tech-support',
-  'Event Management': 'https://drive.google.com/drive/folders/events',
-  'Startup & Innovation': 'https://drive.google.com/drive/folders/startup',
-  'Corporate Relations': 'https://drive.google.com/drive/folders/corporate',
-  'Public Relations': 'https://drive.google.com/drive/folders/pr',
-  'Social Media & Branding': 'https://drive.google.com/drive/folders/social-media'
+const TEAM_CONFIG = {
+  'Technical Support': { color: '#3B82F6', icon: Zap, drive: 'https://drive.google.com/drive/folders/tech', desc: 'Managing the organization\'s digital backbone.' },
+  'Event Management': { color: '#8B5CF6', icon: Calendar, drive: 'https://drive.google.com/drive/folders/events', desc: 'Executing world-class events and experiences.' },
+  'Startup & Innovation': { color: '#10B981', icon: Rocket, drive: 'https://drive.google.com/drive/folders/startup', desc: 'Incubating the next big ideas.' },
+  'Corporate Relations': { color: '#F59E0B', icon: Target, drive: 'https://drive.google.com/drive/folders/corporate', desc: 'Building bridges with the industry.' },
+  'Public Relations': { color: '#EC4899', icon: Globe, drive: 'https://drive.google.com/drive/folders/pr', desc: 'Managing global communications.' },
+  'Social Media & Branding': { color: '#06B6D4', icon: MessageSquare, drive: 'https://drive.google.com/drive/folders/branding', desc: 'Crafting the INCENT visual identity.' }
 };
 
 function WingPortal() {
@@ -26,6 +26,8 @@ function WingPortal() {
   const [stats, setStats] = useState({ tasks: [], members: [], nextMeeting: null });
   const [loading, setLoading] = useState(true);
 
+  const config = TEAM_CONFIG[user?.team] || { color: '#F97316', icon: Users, drive: '#', desc: 'Organization Core Wing.' };
+
   useEffect(() => {
     if (user?.team) fetchPortalData();
   }, [user]);
@@ -33,20 +35,11 @@ function WingPortal() {
   const fetchPortalData = async () => {
     try {
       setLoading(true);
-      // 1. Fetch Team Members
       const { data: members } = await supabase.from('users').select('*').eq('team', user.team).eq('status', 'active');
-      
-      // 2. Fetch Team Tasks
       const { data: tasks } = await supabase.from('tasks').select('*').eq('team', user.team).order('created_at', { ascending: false }).limit(4);
-      
-      // 3. Fetch Next Meeting
       const { data: meetings } = await supabase.from('meetings').select('*').eq('team', user.team).gte('date', new Date().toISOString().split('T')[0]).order('date', { ascending: true }).limit(1);
 
-      setStats({
-        members: members || [],
-        tasks: tasks || [],
-        nextMeeting: meetings?.[0] || null
-      });
+      setStats({ members: members || [], tasks: tasks || [], nextMeeting: meetings?.[0] || null });
     } catch (err) {
       console.error(err);
     } finally {
@@ -56,81 +49,82 @@ function WingPortal() {
 
   const leader = stats.members.find(m => m.role === 'leader');
   const deputy = stats.members.find(m => m.role === 'deputy_leader');
-  const driveLink = TEAM_DRIVE_LINKS[user?.team] || '#';
 
-  if (loading) return <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--accent-primary)' }}>Loading Team Portal...</div>;
+  if (loading) return <div style={{ padding: '4rem', textAlign: 'center', color: config.color, fontWeight: '700' }}>LOADING {user?.team?.toUpperCase()} KERNEL...</div>;
 
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '4rem' }}>
       
-      {/* Team Welcome Banner */}
+      {/* Dynamic Header */}
       <div style={{ 
-        padding: '2.5rem', 
-        background: 'linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%)', 
-        borderRadius: '24px', 
+        padding: '3rem', 
+        background: `linear-gradient(135deg, ${config.color} 0%, #1e1e1e 100%)`, 
+        borderRadius: '30px', 
         color: '#fff',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        boxShadow: `0 20px 40px ${config.color}20`
       }}>
         <div style={{ position: 'relative', zIndex: 1 }}>
-          <Badge variant="primary" style={{ marginBottom: '1rem', background: 'rgba(249,115,22,0.2)', color: 'var(--accent-primary)' }}>{user?.team} Wing</Badge>
-          <h1 style={{ margin: '0 0 10px', fontSize: '2.5rem', fontWeight: '800' }}>{user?.team} Portal</h1>
-          <p style={{ margin: 0, opacity: 0.8, fontSize: '1.1rem' }}>Welcome to your specialized team command center.</p>
+          <Badge variant="primary" style={{ marginBottom: '1.5rem', background: 'rgba(255,255,255,0.2)', color: '#fff', border: 'none' }}>
+            Official Wing Portal
+          </Badge>
+          <h1 style={{ margin: '0 0 10px', fontSize: '3rem', fontWeight: '900', letterSpacing: '-1px' }}>{user?.team}</h1>
+          <p style={{ margin: 0, opacity: 0.9, fontSize: '1.2rem', maxWidth: '600px' }}>{config.desc}</p>
           
-          <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <a href={driveLink} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-              <Button variant="primary" icon={<FolderOpen size={18} />} style={{ padding: '12px 24px' }}>
-                Open Team Drive
+          <div style={{ marginTop: '2.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+            <a href={config.drive} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+              <Button style={{ background: '#fff', color: config.color, fontWeight: '700', padding: '14px 28px' }} icon={<FolderOpen size={20} />}>
+                Team Google Drive
               </Button>
             </a>
-            <Button variant="secondary" icon={<MessageSquare size={18} />} onClick={() => navigate('/communication')} style={{ background: 'rgba(255,255,255,0.1)', color: '#fff', border: '1px solid rgba(255,255,255,0.2)' }}>
-              Team Chat
+            <Button variant="secondary" onClick={() => navigate('/communication')} style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)' }} icon={<MessageSquare size={18} />}>
+              Wing Chatroom
             </Button>
           </div>
         </div>
-        <Users size={200} color="var(--accent-primary)" style={{ position: 'absolute', right: '-40px', bottom: '-40px', opacity: 0.1 }} />
+        <config.icon size={250} color="#fff" style={{ position: 'absolute', right: '-40px', bottom: '-40px', opacity: 0.1, transform: 'rotate(-10deg)' }} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem' }}>
         
-        {/* Leadership Widget */}
-        <Card style={{ borderLeft: '5px solid var(--accent-primary)' }}>
-          <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Users size={20} color="var(--accent-primary)" /> Team Leadership
-          </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            {leader && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', background: 'rgba(0,0,0,0.02)', borderRadius: '16px' }}>
-                <Avatar src={`https://ui-avatars.com/api/?name=${encodeURIComponent(leader.Name)}&background=F97316&color=fff`} size="lg" />
+        {/* Management Widget */}
+        <Card style={{ borderLeft: `6px solid ${config.color}` }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem' }}>
+            <Users size={20} color={config.color} />
+            <h3 style={{ margin: 0 }}>Wing Commanders</h3>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {leader ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1.25rem', background: 'rgba(0,0,0,0.02)', borderRadius: '16px' }}>
+                <Avatar src={`https://ui-avatars.com/api/?name=${encodeURIComponent(leader.Name)}&background=${config.color.replace('#','')}&color=fff`} size="lg" />
                 <div>
-                  <h4 style={{ margin: 0 }}>{leader.Name}</h4>
-                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>Team Leader</p>
-                  <div style={{ marginTop: '5px', display: 'flex', gap: '5px' }}>
-                    <Badge variant="primary" size="sm"><Star size={10} /> {leader.points || 0} pts</Badge>
-                  </div>
+                  <h4 style={{ margin: 0, fontSize: '1.1rem' }}>{leader.Name}</h4>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>Wing Leader</p>
+                  <Badge style={{ marginTop: '5px', background: `${config.color}15`, color: config.color }}>{leader.points || 0} pts</Badge>
                 </div>
               </div>
-            )}
+            ) : <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Leader not assigned.</p>}
+            
             {deputy && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', background: 'rgba(0,0,0,0.02)', borderRadius: '16px' }}>
-                <Avatar src={`https://ui-avatars.com/api/?name=${encodeURIComponent(deputy.Name)}&background=6366F1&color=fff`} size="lg" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', background: 'rgba(0,0,0,0.02)', borderRadius: '16px', opacity: 0.8 }}>
+                <Avatar src={`https://ui-avatars.com/api/?name=${encodeURIComponent(deputy.Name)}&background=666&color=fff`} size="md" />
                 <div>
-                  <h4 style={{ margin: 0 }}>{deputy.Name}</h4>
-                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>Deputy Leader</p>
-                  <Badge variant="info" size="sm" style={{ marginTop: '5px' }}>{deputy.points || 0} pts</Badge>
+                  <h4 style={{ margin: 0, fontSize: '0.95rem' }}>{deputy.Name}</h4>
+                  <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>Deputy Leader</p>
                 </div>
               </div>
             )}
           </div>
         </Card>
 
-        {/* Task Widget */}
+        {/* Task Board Widget */}
         <Card>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
             <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <CheckSquare size={20} color="#10B981" /> Active Tasks
+              <CheckSquare size={20} color="#10B981" /> Current Operations
             </h3>
-            <Button size="sm" variant="secondary" onClick={() => navigate('/tasks')}>View All</Button>
+            <Button size="sm" variant="secondary" onClick={() => navigate('/tasks')}>Go to Board</Button>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {stats.tasks.map(t => (
@@ -142,21 +136,21 @@ function WingPortal() {
                 <Badge variant={t.priority === 'High' ? 'danger' : 'warning'}>{t.priority}</Badge>
               </div>
             ))}
-            {stats.tasks.length === 0 && <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>No pending tasks!</p>}
+            {stats.tasks.length === 0 && <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>All operations complete.</div>}
           </div>
         </Card>
 
-        {/* Meeting Widget */}
-        <Card style={{ background: stats.nextMeeting ? 'rgba(249,115,22,0.03)' : 'transparent' }}>
+        {/* Sync Center Widget */}
+        <Card style={{ background: stats.nextMeeting ? `${config.color}05` : 'transparent' }}>
           <h3 style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Video size={20} color="#6366F1" /> Next Meeting
+            <Video size={20} color={config.color} /> Sync Center
           </h3>
           {stats.nextMeeting ? (
             <div>
               <div style={{ display: 'flex', gap: '15px', marginBottom: '1.5rem' }}>
-                <div style={{ padding: '10px', background: '#fff', borderRadius: '12px', border: '1px solid var(--border-light)', textAlign: 'center', minWidth: '60px' }}>
-                  <div style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--accent-primary)' }}>{new Date(stats.nextMeeting.date).toLocaleString('default', { month: 'short' }).toUpperCase()}</div>
-                  <div style={{ fontSize: '1.5rem', fontWeight: '900' }}>{new Date(stats.nextMeeting.date).getDate()}</div>
+                <div style={{ padding: '12px', background: config.color, color: '#fff', borderRadius: '12px', textAlign: 'center', minWidth: '65px' }}>
+                  <div style={{ fontSize: '0.7rem', fontWeight: '800', textTransform: 'uppercase' }}>{new Date(stats.nextMeeting.date).toLocaleString('default', { month: 'short' })}</div>
+                  <div style={{ fontSize: '1.6rem', fontWeight: '900' }}>{new Date(stats.nextMeeting.date).getDate()}</div>
                 </div>
                 <div>
                   <h4 style={{ margin: '0 0 5px' }}>{stats.nextMeeting.title}</h4>
@@ -165,27 +159,29 @@ function WingPortal() {
                   </p>
                 </div>
               </div>
-              <Button variant="primary" style={{ width: '100%' }} onClick={() => navigate('/meetings')}>Join Video Call</Button>
+              <Button style={{ width: '100%', background: config.color, color: '#fff' }} onClick={() => navigate('/meetings')}>Enter Video Bridge</Button>
             </div>
-          ) : (
-            <p style={{ textAlign: 'center', color: 'var(--text-muted)' }}>No meetings scheduled.</p>
-          )}
+          ) : <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '2rem' }}>No syncs scheduled.</p>}
         </Card>
       </div>
 
-      {/* Quick Action Bar */}
-      <Card style={{ display: 'flex', justifyContent: 'space-around', padding: '1.5rem', background: '#f8f9fa' }}>
-        <div style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => navigate('/calendar')}>
-          <div style={{ width: 40, height: 40, borderRadius: '10px', background: 'rgba(245,158,11,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px' }}><Zap size={20} color="#F59E0B" /></div>
-          <span style={{ fontSize: '0.8rem', fontWeight: '600' }}>Deadlines</span>
-        </div>
-        <div style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => navigate('/leaderboard')}>
-          <div style={{ width: 40, height: 40, borderRadius: '10px', background: 'rgba(16,185,129,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px' }}><Star size={20} color="#10B981" /></div>
-          <span style={{ fontSize: '0.8rem', fontWeight: '600' }}>Leaderboard</span>
-        </div>
-        <div style={{ textAlign: 'center', cursor: 'pointer' }} onClick={() => navigate('/team')}>
-          <div style={{ width: 40, height: 40, borderRadius: '10px', background: 'rgba(99,102,241,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 8px' }}><Users size={20} color="#6366F1" /></div>
-          <span style={{ fontSize: '0.8rem', fontWeight: '600' }}>Members</span>
+      {/* Analytics Snapshot */}
+      <Card style={{ background: '#f8f9fa', border: '1px solid var(--border-light)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
+          <div style={{ textAlign: 'center' }}>
+            <h4 style={{ margin: '0 0 5px', fontSize: '1.5rem', fontWeight: '800', color: config.color }}>{stats.members.length}</h4>
+            <span style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Active Personnel</span>
+          </div>
+          <div style={{ width: '1px', height: '40px', background: 'var(--border-light)' }}></div>
+          <div style={{ textAlign: 'center' }}>
+            <h4 style={{ margin: '0 0 5px', fontSize: '1.5rem', fontWeight: '800', color: '#10B981' }}>{stats.tasks.filter(t => t.status === 'completed').length}</h4>
+            <span style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Tasks Completed</span>
+          </div>
+          <div style={{ width: '1px', height: '40px', background: 'var(--border-light)' }}></div>
+          <div style={{ textAlign: 'center' }}>
+            <h4 style={{ margin: '0 0 5px', fontSize: '1.5rem', fontWeight: '800', color: '#6366F1' }}>{stats.members.reduce((acc, m) => acc + (m.points || 0), 0)}</h4>
+            <span style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Total Wing Points</span>
+          </div>
         </div>
       </Card>
     </div>
