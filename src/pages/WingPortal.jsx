@@ -28,7 +28,7 @@ function WingPortal({ preview = false }) {
   const [announcement, setAnnouncement] = useState("System operational. Welcome to your wing.");
   const [loading, setLoading] = useState(true);
 
-  const targetTeam = preview ? teamName : user?.team;
+  const targetTeam = preview ? teamName : (user?.team || 'General');
   const config = TEAM_CONFIG[targetTeam] || { color: '#F97316', icon: Users, drive: '#', desc: 'Central Operations Hub' };
 
   useEffect(() => {
@@ -50,7 +50,7 @@ function WingPortal({ preview = false }) {
 
   const leader = stats.members.find(m => m.role === 'leader');
 
-  if (loading) return <div style={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: config.color, fontWeight: '900', letterSpacing: '2px' }}>ACCESSING {(user?.team || 'Portal').toUpperCase()}...</div>;
+  if (loading) return <div style={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: config.color, fontWeight: '900', letterSpacing: '2px' }}>ACCESSING {targetTeam.toUpperCase()}...</div>;
 
   return (
     <div className="animate-fade-in perspective-container" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', paddingBottom: '6rem' }}>
@@ -82,10 +82,10 @@ function WingPortal({ preview = false }) {
       }}>
         <div style={{ position: 'relative', zIndex: 2 }}>
           <Badge variant="primary" style={{ marginBottom: '1.25rem', background: config.color, color: '#fff', border: 'none', padding: '6px 14px' }}>
-            {user?.team?.toUpperCase()} COMMAND
+            {targetTeam.toUpperCase()} COMMAND
           </Badge>
           <h1 style={{ margin: '0 0 8px', fontSize: '3.5rem', fontWeight: '900', color: 'var(--text-primary)', letterSpacing: '-2.5px' }}>
-            {user?.team?.split(' ')[0]} <span style={{ color: config.color }}>Portal</span>
+            {targetTeam.split(' ')[0]} <span style={{ color: config.color }}>Portal</span>
           </h1>
           <p style={{ margin: 0, opacity: 0.9, fontSize: '1.1rem', maxWidth: '600px', color: 'var(--text-secondary)' }}>{config.desc}</p>
         </div>
