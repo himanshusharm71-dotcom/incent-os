@@ -24,10 +24,36 @@ function Communication() {
   const scrollRef = useRef(null);
 
   const channels = [
-    { id: 'Broadcast', name: 'Main Broadcast', icon: Megaphone, color: '#F97316', access: 'all', canPost: ['super_admin', 'admin'] },
-    { id: 'Leaders', name: 'Leaders Hub', icon: Crown, color: '#F59E0B', access: ['super_admin', 'admin', 'leader'] },
-    { id: 'Deputies', name: 'Deputies Hub', icon: Shield, color: '#6366F1', access: ['super_admin', 'admin', 'leader', 'deputy_leader'] },
-    { id: 'Volunteers', name: 'General Chat', icon: Users, color: '#10B981', access: 'all', canPost: 'all' },
+    { 
+      id: 'Main', 
+      name: 'Main Group', 
+      icon: Megaphone, 
+      color: '#F97316', 
+      access: 'all', 
+      canPost: ['super_admin', 'admin'] 
+    },
+    { 
+      id: 'Leaders', 
+      name: 'Leaders Group', 
+      icon: Crown, 
+      color: '#F59E0B', 
+      access: ['super_admin', 'admin', 'leader'] 
+    },
+    { 
+      id: 'Deputies', 
+      name: 'Deputy Leaders Group', 
+      icon: Shield, 
+      color: '#6366F1', 
+      access: ['super_admin', 'admin', 'leader', 'deputy_leader'] 
+    },
+    { 
+      id: 'Volunteers', 
+      name: 'Volunteers Group', 
+      icon: Users, 
+      color: '#10B981', 
+      access: 'all', 
+      canPost: 'all' 
+    },
   ];
 
   const currentChannel = channels.find(c => c.id === activeChannel);

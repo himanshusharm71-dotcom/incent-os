@@ -121,34 +121,44 @@ function Dashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      // Members count
-      const { count: userCount } = await supabase.from('users').select('*', { count: 'exact', head: true });
+      const isTeamRestricted = user?.role !== 'super_admin' && user?.role !== 'admin';
       
-      // Tasks stats
-      const { data: tasks } = await supabase.from('tasks').select('status');
+      // 1. Members count
+      let userQuery = supabase.from('users').select('*', { count: 'exact', head: true });
+      if (isTeamRestricted) userQuery = userQuery.eq('team', user.team);
+      const { count: userCount } = await userQuery;
+      
+      // 2. Tasks stats
+      let taskQuery = supabase.from('tasks').select('status, team');
+      if (isTeamRestricted) taskQuery = taskQuery.eq('team', user.team);
+      const { data: tasks } = await taskQuery;
+      
       const completed = tasks?.filter(t => t.status === 'completed').length || 0;
       const pending = tasks?.filter(t => t.status === 'pending').length || 0;
 
-      // Recent Users (Leaders)
-      const { data: users } = await supabase.from('users').select('*').order('created_at', { ascending: false });
+      // 3. All Users for leadership display
+      const { data: allUsers } = await supabase.from('users').select('*').order('created_at', { ascending: false });
 
       setStats({
         totalMembers: userCount || 0,
         tasksCompleted: completed,
         pendingTasks: pending,
         avgPerformance: userCount > 0 ? Math.round((completed / (completed + pending || 1)) * 100) : 0,
-        recentUsers: users || []
+        recentUsers: allUsers || []
       });
 
-      // Generate real recent activity from tasks
-      const { data: recentTasks } = await supabase.from('tasks').select('*').order('created_at', { ascending: false }).limit(5);
+      // 4. Recent activity filtered
+      let actQuery = supabase.from('tasks').select('*').order('created_at', { ascending: false }).limit(5);
+      if (isTeamRestricted) actQuery = actQuery.eq('team', user.team);
+      const { data: recentTasks } = await actQuery;
+
       const recent = (recentTasks || []).map((t, i) => ({
         id: i + 1,
         text: `Task "${t.title}" — ${t.status} (${t.assigned_to || 'Unassigned'})`,
         time: t.created_at ? new Date(t.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'Unknown'
       }));
       if (recent.length === 0) {
-        recent.push({ id: 1, text: 'No recent activity yet. Assign tasks to get started!', time: 'Now' });
+        recent.push({ id: 1, text: 'No recent activity in your team.', time: 'Now' });
       }
       setRecentActivity(recent);
 

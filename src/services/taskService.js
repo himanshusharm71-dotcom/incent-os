@@ -35,6 +35,16 @@ export const getTasks = async (user) => {
 };
 
 export const updateTaskStatus = async (id, status, assignedToName) => {
+  // 1. Fetch the task to check deadline
+  const { data: task, error: fetchErr } = await supabase
+    .from('tasks')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (fetchErr) throw fetchErr;
+
+  // 2. Update the task status
   const { error } = await supabase
     .from('tasks')
     .update({ status })
@@ -45,8 +55,7 @@ export const updateTaskStatus = async (id, status, assignedToName) => {
     throw error;
   }
 
-  // AUTOMATED POINTS SYSTEM
-  // If task is completed, reward +10 points
+  // 3. AUTOMATED POINTS SYSTEM (Only when status moves to 'completed')
   if (status === 'completed' && assignedToName) {
     try {
       // Find the user by Name
@@ -57,10 +66,19 @@ export const updateTaskStatus = async (id, status, assignedToName) => {
         .single();
         
       if (userData) {
-        // Add 10 points
+        const now = new Date();
+        const deadline = new Date(task.deadline);
+        let pointChange = 10; // Default: On-time
+
+        // Check if Late
+        if (now > deadline) {
+          pointChange = -5; // Late completion penalty
+        }
+
+        // Apply points
         await supabase
           .from('users')
-          .update({ points: (userData.points || 0) + 10 })
+          .update({ points: (userData.points || 0) + pointChange })
           .eq('id', userData.id);
       }
     } catch (err) {
