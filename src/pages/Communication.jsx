@@ -17,7 +17,7 @@ const Crown = ({ size, color }) => (
 
 function Communication() {
   const { user } = useAuth();
-  const [activeChannel, setActiveChannel] = useState('Broadcast');
+  const [activeChannel, setActiveChannel] = useState('Main');
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);

@@ -9,44 +9,45 @@ function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let isFetching = false;
-
-    // Check Supabase session FIRST — it takes priority over localStorage
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        // A real Supabase user is logged in — clear any cached master session
-        localStorage.removeItem('incent_master_session');
-        if (!isFetching) {
-          isFetching = true;
-          fetchUserProfile(session.user.id, session.user.email).finally(() => isFetching = false);
-        }
-      } else {
-        // No Supabase session — check for master bypass
+    // 1. Initial Session Check
+    const initAuth = async () => {
+      try {
+        // Check master session first
         const masterSession = localStorage.getItem('incent_master_session');
-        if (masterSession) {
+        
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          // Real Supabase user exists -> Clean up master session and fetch profile
+          localStorage.removeItem('incent_master_session');
+          await fetchUserProfile(session.user.id, session.user.email);
+        } else if (masterSession) {
+          // No Supabase session, but master exists
           try {
             setUser(JSON.parse(masterSession));
           } catch (e) {
             localStorage.removeItem('incent_master_session');
+            setUser(null);
           }
+        } else {
+          setUser(null);
         }
+      } catch (err) {
+        console.error("Auth init error:", err);
+      } finally {
         setLoading(false);
       }
-    });
+    };
 
-    // Listen for auth state changes
+    initAuth();
+
+    // 2. Auth state listener
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        // Real user logged in — always clear master session
         localStorage.removeItem('incent_master_session');
-        if (!isFetching) {
-          isFetching = true;
-          await fetchUserProfile(session.user.id, session.user.email);
-          isFetching = false;
-        }
+        await fetchUserProfile(session.user.id, session.user.email);
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
-        setLoading(false);
       }
     });
 
@@ -62,121 +63,45 @@ function AuthProvider({ children }) {
         .single();
 
       if (data) {
-        let finalData = data;
-        
-        // Auto-activate pre-authorized users
-        if (data.status === 'pre_approved') {
-          const { data: updated, error: updErr } = await supabase
-            .from('users')
-            .update({ status: 'active' })
-            .eq('id', uid)
-            .select()
-            .single();
-          if (!updErr && updated) finalData = updated;
-        }
-
-        setUser({ uid, email, ...finalData });
+        setUser({ uid, email, ...data });
       } else {
-        // User exists in Auth but not in DB (edge case)
-        setUser({ uid, email, status: 'pending', pending: true });
+        // If they exist in Auth but not DB, show them as pending
+        setUser({ uid, email, role: 'pending', status: 'pending' });
       }
     } catch (err) {
       console.error("Profile fetch error:", err);
-      setUser(null);
-    } finally {
-      setLoading(false);
     }
   };
 
-  // Master Credentials (Bypass Supabase)
-  const MASTER_EMAIL = '2024cshimanshu16902@poornima.edu.in';
-  const MASTER_PASS = 'himanshu9001';
-
-  // Real login — uses Supabase Auth credentials only
   const login = async (email, password) => {
-    // 1. Strict Master Bypass Check
-    if (email === MASTER_EMAIL) {
-      if (password === MASTER_PASS) {
-        // Fetch real points from DB if available
-        let realPoints = 0;
-        try {
-          const { data: dbUser } = await supabase
-            .from('users')
-            .select('points')
-            .eq('email', MASTER_EMAIL)
-            .single();
-          if (dbUser) realPoints = dbUser.points || 0;
-        } catch (e) { /* ignore, default to 0 */ }
+    const MASTER_EMAIL = '2024cshimanshu16902@poornima.edu.in';
+    const MASTER_PASS = 'himanshu9001';
 
-        const masterUser = {
-          uid: 'master-admin-001',
-          email: MASTER_EMAIL,
-          Name: 'Himanshu Sharma',
-          role: 'super_admin',
-          team: 'Core',
-          status: 'active',
-          points: realPoints,
-          isMaster: true
-        };
-        setUser(masterUser);
-        localStorage.setItem('incent_master_session', JSON.stringify(masterUser));
-        setLoading(false);
-        return { user: masterUser };
-      } else {
-        // If it's the master email but wrong password, block it!
-        throw new Error('Invalid credentials for Master Account.');
-      }
+    if (email === MASTER_EMAIL && password === MASTER_PASS) {
+      // Fetch points for master
+      let realPoints = 0;
+      try {
+        const { data } = await supabase.from('users').select('points').eq('email', MASTER_EMAIL).single();
+        if (data) realPoints = data.points;
+      } catch (e) {}
+
+      const masterUser = {
+        uid: 'master-admin-001',
+        email: MASTER_EMAIL,
+        Name: 'Himanshu Sharma',
+        role: 'super_admin',
+        team: 'Core',
+        status: 'active',
+        points: realPoints,
+        isMaster: true
+      };
+      setUser(masterUser);
+      localStorage.setItem('incent_master_session', JSON.stringify(masterUser));
+      return { user: masterUser };
     }
 
-    // 2. Normal Supabase Auth (for other members)
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
-    return data;
-  };
-
-  // Request access — creates real Supabase Auth account + pending DB row
-  const requestAccess = async (email, password, name, teamPref) => {
-    // 1. Create the Auth account with real email + password
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (error) throw error;
-
-    if (data.user) {
-      // 2. Check if they were pre-authorized by email
-      const { data: preAuth } = await supabase
-        .from('users')
-        .select('*')
-        .eq('email', email)
-        .single();
-
-      if (preAuth) {
-        // If pre-authorized, update the record with their real Auth ID and set to active
-        const { error: dbError } = await supabase
-          .from('users')
-          .update({ 
-            id: data.user.id, 
-            Name: name, 
-            status: 'active',
-            role: preAuth.role !== 'pending' ? preAuth.role : 'member' 
-          })
-          .eq('email', email);
-        if (dbError) throw dbError;
-      } else {
-        // Normal signup: Add to users table with status=pending (awaiting admin approval)
-        const { error: dbError } = await supabase.from('users').insert([{
-          id: data.user.id,
-          Name: name,
-          email: email,
-          role: 'pending',
-          team: teamPref,
-          status: 'pending',
-          points: 0,
-        }]);
-        if (dbError) throw dbError;
-      }
-    }
-
-    // Sign them back out immediately — they must wait for admin approval
-    await supabase.auth.signOut();
     return data;
   };
 
@@ -187,7 +112,7 @@ function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, requestAccess }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {!loading && children}
     </AuthContext.Provider>
   );
