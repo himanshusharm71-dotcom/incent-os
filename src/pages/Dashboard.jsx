@@ -139,8 +139,15 @@ function Dashboard() {
     { Name: 'Aditya Kapoor', role: 'admin', points: getUserPoints('aditya') }
   ];
 
-  const teamLeaders = stats.recentUsers.filter(u => u.role === 'leader').slice(0, 4);
-  const deputies = stats.recentUsers.filter(u => u.role === 'deputy_leader').slice(0, 4);
+  const teamLeaders = stats.recentUsers
+    .filter(u => u.role === 'leader')
+    .filter(u => isAdmin ? true : u.team === user?.team)
+    .slice(0, 6);
+
+  const deputies = stats.recentUsers
+    .filter(u => u.role === 'deputy_leader')
+    .filter(u => isAdmin ? true : u.team === user?.team)
+    .slice(0, 6);
 
   return (
     <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
