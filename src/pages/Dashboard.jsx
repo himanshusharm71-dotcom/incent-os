@@ -208,6 +208,20 @@ function Dashboard() {
           </Card>
         ))}
       </div>
+
+      {/* EXECUTIVE LEADERSHIP PHOTOS */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ padding: '8px', background: 'rgba(249,115,22,0.1)', borderRadius: '10px' }}><Crown size={20} color="var(--accent-primary)" /></div>
+          <h2 style={{ margin: 0, fontSize: '1.4rem', fontWeight: '800' }}>Executive Command</h2>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.25rem' }}>
+          {executiveTeam.map((person, i) => (
+            <PersonCard key={i} person={person} size={i === 0 ? 'lg' : 'md'} badgeVariant={i === 0 ? 'danger' : 'primary'} />
+          ))}
+        </div>
+      </div>
+
     </div>
   );
 }
