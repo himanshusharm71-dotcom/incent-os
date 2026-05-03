@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, Users, CheckSquare, Trophy, Calendar, FileText, MessageSquare, Settings, LogOut, Shield } from 'lucide-react';
+import { LayoutDashboard, Users, CheckSquare, Trophy, Calendar, FileText, MessageSquare, Settings, LogOut, Shield, Video } from 'lucide-react';
 import { Avatar } from './ui/Avatar';
 import { Badge } from './ui/Badge';
 import { useAuth } from '../context/AuthProvider';
@@ -30,8 +30,9 @@ export function Sidebar({ className = '', onNavClick }) {
     { name: 'Team', path: '/team', icon: Users },
     { name: 'Tasks', path: '/tasks', icon: CheckSquare },
     { name: 'Leaderboard', path: '/leaderboard', icon: Trophy },
-    { name: 'Meetings', path: '/meetings', icon: Calendar },
-    { name: 'Files', path: '/files', icon: FileText },
+    { name: 'Meetings', path: '/meetings', icon: Video },
+    { name: 'Calendar', path: '/calendar', icon: Calendar },
+    { name: 'Cloud Drive', path: '/files', icon: FileText },
     { name: 'Communication', path: '/communication', icon: MessageSquare },
   ];
 

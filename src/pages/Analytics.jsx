@@ -3,9 +3,12 @@ import { supabase } from '../services/supabase';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Avatar } from '../components/ui/Avatar';
-import { Activity, TrendingUp, Users, Target, Award, AlertTriangle, BarChart3, PieChart } from 'lucide-react';
+import { useAuth } from '../context/AuthProvider';
+import { Activity, TrendingUp, Users, Target, Award, AlertTriangle, BarChart3, PieChart, RefreshCw } from 'lucide-react';
 
 function Analytics() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'super_admin' || user?.role === 'admin';
   const [stats, setStats] = useState({
     teamStats: [],
     topPerformers: [],
@@ -69,13 +72,45 @@ function Analytics() {
     }
   };
 
+  const handleResetPoints = async () => {
+    if (!window.confirm("Are you sure you want to RESET ALL POINTS? This will start a new week for everyone.")) return;
+    
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({ points: 0 })
+        .neq('role', 'super_admin'); // Optional: spare super admin if needed
+
+      if (error) throw error;
+      alert("Leaderboard has been reset for the new week!");
+      fetchAnalytics();
+    } catch (err) {
+      alert("Error resetting points: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="animate-fade-in" style={{ paddingBottom: '3rem' }}>
       
       {/* Header */}
-      <div style={{ marginBottom: '2.5rem' }}>
-        <h1 style={{ fontSize: '2rem', fontWeight: '800', marginBottom: '0.5rem' }}>Performance Analytics</h1>
-        <p style={{ color: 'var(--text-muted)' }}>Deep-dive into INCENT OS activity and team productivity trends.</p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem' }}>
+        <div>
+          <h1 style={{ fontSize: '2rem', fontWeight: '800', marginBottom: '0.5rem' }}>Performance Analytics</h1>
+          <p style={{ color: 'var(--text-muted)' }}>Deep-dive into INCENT OS activity and team productivity trends.</p>
+        </div>
+        {isAdmin && (
+          <Button 
+            variant="danger" 
+            icon={<RefreshCw size={18} />} 
+            onClick={handleResetPoints}
+            style={{ background: '#EF4444', color: '#fff', border: 'none' }}
+          >
+            Reset Weekly Leaderboard
+          </Button>
+        )}
       </div>
 
       {/* Top Level Metrics */}
