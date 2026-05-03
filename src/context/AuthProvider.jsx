@@ -11,31 +11,40 @@ function AuthProvider({ children }) {
   useEffect(() => {
     let isFetching = false;
 
-    // 1. Check for Master Bypass session first
-    const masterSession = localStorage.getItem('incent_master_session');
-    if (masterSession) {
-      setUser(JSON.parse(masterSession));
-      setLoading(false);
-      return;
-    }
-
-    // 2. Normal Supabase session
+    // Check Supabase session FIRST — it takes priority over localStorage
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user && !isFetching) {
-        isFetching = true;
-        fetchUserProfile(session.user.id, session.user.email).finally(() => isFetching = false);
+      if (session?.user) {
+        // A real Supabase user is logged in — clear any cached master session
+        localStorage.removeItem('incent_master_session');
+        if (!isFetching) {
+          isFetching = true;
+          fetchUserProfile(session.user.id, session.user.email).finally(() => isFetching = false);
+        }
       } else {
+        // No Supabase session — check for master bypass
+        const masterSession = localStorage.getItem('incent_master_session');
+        if (masterSession) {
+          try {
+            setUser(JSON.parse(masterSession));
+          } catch (e) {
+            localStorage.removeItem('incent_master_session');
+          }
+        }
         setLoading(false);
       }
     });
 
     // Listen for auth state changes
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user && !isFetching) {
-        isFetching = true;
-        await fetchUserProfile(session.user.id, session.user.email);
-        isFetching = false;
-      } else if (!session?.user) {
+      if (session?.user) {
+        // Real user logged in — always clear master session
+        localStorage.removeItem('incent_master_session');
+        if (!isFetching) {
+          isFetching = true;
+          await fetchUserProfile(session.user.id, session.user.email);
+          isFetching = false;
+        }
+      } else if (event === 'SIGNED_OUT') {
         setUser(null);
         setLoading(false);
       }

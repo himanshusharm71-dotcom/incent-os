@@ -121,12 +121,17 @@ export function Sidebar({ className = '', onNavClick }) {
           src={getLeadershipImage(user?.Name || user?.name)}
           alt={user?.Name || 'User'}
           style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--accent-primary)' }}
+          onError={e => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.Name || 'U')}&background=F97316&color=fff`; }}
         />
         <div style={{ flex: 1, overflow: 'hidden' }}>
-          <p style={{ margin: 0, fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.9rem', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>{user?.Name || user?.name}</p>
-          <Badge variant="primary" style={{ marginTop: '4px', fontSize: '0.65rem' }}>{user?.role}</Badge>
+          <p style={{ margin: 0, fontWeight: '600', color: 'var(--text-primary)', fontSize: '0.9rem', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+            {user?.Name || user?.name || 'User'}
+          </p>
+          <Badge variant={user?.role === 'super_admin' ? 'danger' : 'primary'} style={{ marginTop: '4px', fontSize: '0.65rem', textTransform: 'uppercase' }}>
+            {user?.role?.replace('_', ' ') || 'member'}
+          </Badge>
         </div>
-        <LogOut onClick={logout} size={18} color="var(--text-muted)" style={{ cursor: 'pointer' }} title="Logout" />
+        <LogOut onClick={logout} size={18} color="var(--text-muted)" style={{ cursor: 'pointer', flexShrink: 0 }} title="Logout" />
       </div>
     </aside>
   );
