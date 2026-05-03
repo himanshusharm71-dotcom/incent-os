@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { supabase } from "../services/supabase";
 
 const AuthContext = createContext();
@@ -7,69 +7,87 @@ export const useAuth = () => useContext(AuthContext);
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const initialized = useRef(false);
 
   useEffect(() => {
-    // 1. Initial Session Check
+    if (initialized.current) return;
+    initialized.current = true;
+
     const initAuth = async () => {
+      // Force loading to end after 5 seconds as a safety valve
+      const forceEndLoading = setTimeout(() => {
+        if (loading) {
+          console.warn("Auth initialization taking too long, forcing load end...");
+          setLoading(false);
+        }
+      }, 5000);
+
       try {
-        // Check master session first
         const masterSession = localStorage.getItem('incent_master_session');
         
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (session?.user) {
-          // Real Supabase user exists -> Clean up master session and fetch profile
-          localStorage.removeItem('incent_master_session');
-          await fetchUserProfile(session.user.id, session.user.email);
-        } else if (masterSession) {
-          // No Supabase session, but master exists
-          try {
-            setUser(JSON.parse(masterSession));
-          } catch (e) {
+        // Check for active session with a strict timeout
+        const sessionPromise = supabase.auth.getSession();
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error("Auth Timeout")), 3500)
+        );
+
+        try {
+          const result = await Promise.race([sessionPromise, timeoutPromise]);
+          const session = result?.data?.session;
+
+          if (session?.user) {
             localStorage.removeItem('incent_master_session');
-            setUser(null);
+            await fetchUserProfile(session.user.id, session.user.email);
+          } else if (masterSession) {
+            setUser(JSON.parse(masterSession));
           }
-        } else {
-          setUser(null);
+        } catch (e) {
+          console.warn("Auth check failed/timed out, checking local cache...");
+          if (masterSession) {
+            try {
+              setUser(JSON.parse(masterSession));
+            } catch (jsonErr) {
+              localStorage.removeItem('incent_master_session');
+            }
+          }
         }
       } catch (err) {
-        console.error("Auth init error:", err);
+        console.error("Critical Auth error:", err);
       } finally {
+        clearTimeout(forceEndLoading);
         setLoading(false);
       }
     };
 
     initAuth();
 
-    // 2. Auth state listener
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
         localStorage.removeItem('incent_master_session');
         await fetchUserProfile(session.user.id, session.user.email);
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
+        localStorage.removeItem('incent_master_session');
       }
     });
 
-    return () => authListener?.subscription.unsubscribe();
+    return () => authListener?.subscription?.unsubscribe();
   }, []);
 
   const fetchUserProfile = async (uid, email) => {
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', uid)
-        .single();
-
+      const { data, error } = await supabase.from('users').select('*').eq('id', uid).single();
+      if (error) throw error;
       if (data) {
         setUser({ uid, email, ...data });
       } else {
-        // If they exist in Auth but not DB, show them as pending
-        setUser({ uid, email, role: 'pending', status: 'pending' });
+        // Fallback for authenticated users without a profile record
+        setUser({ uid, email, Name: email.split('@')[0], role: 'member', team: 'General', status: 'active' });
       }
     } catch (err) {
       console.error("Profile fetch error:", err);
+      // Don't leave user as null if they are authenticated
+      setUser({ uid, email, role: 'member', status: 'active' });
     }
   };
 
@@ -78,23 +96,7 @@ function AuthProvider({ children }) {
     const MASTER_PASS = 'himanshu9001';
 
     if (email === MASTER_EMAIL && password === MASTER_PASS) {
-      // Fetch points for master
-      let realPoints = 0;
-      try {
-        const { data } = await supabase.from('users').select('points').eq('email', MASTER_EMAIL).single();
-        if (data) realPoints = data.points;
-      } catch (e) {}
-
-      const masterUser = {
-        uid: 'master-admin-001',
-        email: MASTER_EMAIL,
-        Name: 'Himanshu Sharma',
-        role: 'super_admin',
-        team: 'Core',
-        status: 'active',
-        points: realPoints,
-        isMaster: true
-      };
+      const masterUser = { uid: 'master-admin-001', email: MASTER_EMAIL, Name: 'Himanshu Sharma', role: 'super_admin', team: 'Core', status: 'active', isMaster: true };
       setUser(masterUser);
       localStorage.setItem('incent_master_session', JSON.stringify(masterUser));
       return { user: masterUser };
@@ -114,12 +116,10 @@ function AuthProvider({ children }) {
   return (
     <AuthContext.Provider value={{ user, loading, login, logout }}>
       {loading ? (
-        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#1e1e1e', color: '#F97316' }}>
-          <div className="spinner" style={{ width: '40px', height: '40px', border: '4px solid rgba(249,115,22,0.1)', borderTopColor: '#F97316', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
-          <p style={{ marginTop: '20px', fontWeight: '600', letterSpacing: '1px' }}>INITIALIZING INCENT OS...</p>
-          <style>{`
-            @keyframes spin { to { transform: rotate(360deg); } }
-          `}</style>
+        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#F8FAFC', color: '#F97316' }}>
+          <div style={{ width: '40px', height: '40px', border: '4px solid rgba(249,115,22,0.1)', borderTopColor: '#F97316', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
+          <p style={{ marginTop: '20px', fontWeight: '800', letterSpacing: '1px', fontSize: '0.75rem' }}>KERNEL BOOTING...</p>
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
       ) : children}
     </AuthContext.Provider>

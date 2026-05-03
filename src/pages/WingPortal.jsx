@@ -7,17 +7,20 @@ import { Avatar } from '../components/ui/Avatar';
 import { Button } from '../components/ui/Button';
 import { 
   ExternalLink, Users, CheckSquare, MessageSquare, 
-  Video, FolderOpen, Star, Zap, Clock, Rocket, Target, Globe, Calendar, Box, Megaphone, Shield
+  Video, FolderOpen, Star, Zap, Clock, Rocket, Target, Globe, Calendar, Box, Megaphone, Shield, FileText
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const TEAM_CONFIG = {
-  'Technical Support': { color: '#3B82F6', icon: Zap, drive: 'https://drive.google.com/drive/folders/tech', desc: 'Digital Core & Systems Management' },
-  'Event Management': { color: '#8B5CF6', icon: Calendar, drive: 'https://drive.google.com/drive/folders/events', desc: 'Experience Orchestration & Execution' },
-  'Startup & Innovation': { color: '#10B981', icon: Rocket, drive: 'https://drive.google.com/drive/folders/startup', desc: 'Innovation Lab & Future Labs' },
-  'Corporate Relations': { color: '#F59E0B', icon: Target, drive: 'https://drive.google.com/drive/folders/corporate', desc: 'Strategic Partnerships & Industry' },
-  'Public Relations': { color: '#EC4899', icon: Globe, drive: 'https://drive.google.com/drive/folders/pr', desc: 'Global Communication & Narrative' },
-  'Social Media & Branding': { color: '#06B6D4', icon: MessageSquare, drive: 'https://drive.google.com/drive/folders/branding', desc: 'Creative Vision & Visual Identity' }
+  'Core': { color: '#F97316', icon: Shield, drive: '#', desc: 'Central Command & Strategy' },
+  'Technical Support': { color: '#3B82F6', icon: Zap, drive: '#', desc: 'Digital Core & Systems Management' },
+  'Event Management': { color: '#8B5CF6', icon: Calendar, drive: '#', desc: 'Experience Orchestration & Execution' },
+  'Startup & Innovation': { color: '#10B981', icon: Rocket, drive: '#', desc: 'Innovation Lab & Future Research' },
+  'Corporate Relations': { color: '#F59E0B', icon: Target, drive: '#', desc: 'Strategic Partnerships & Industry' },
+  'Public Relations': { color: '#EC4899', icon: Globe, drive: '#', desc: 'Global Communication & Narrative' },
+  'Social Media & Branding': { color: '#06B6D4', icon: MessageSquare, drive: '#', desc: 'Creative Vision & Visual Identity' },
+  'Academic & Research': { color: '#6366F1', icon: FileText, drive: '#', desc: 'Knowledge Base & Scholarly Excellence' },
+  'Cultural & Creative': { color: '#F43F5E', icon: Star, drive: '#', desc: 'Arts, Culture & Creative Expression' }
 };
 
 function WingPortal({ preview = false }) {

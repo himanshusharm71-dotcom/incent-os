@@ -4,7 +4,9 @@ import "./index.css";
 import App from "./App";
 import AuthProvider from "./context/AuthProvider";
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+const root = document.getElementById("root");
+
+ReactDOM.createRoot(root).render(
   <React.StrictMode>
     <AuthProvider>
       <App />

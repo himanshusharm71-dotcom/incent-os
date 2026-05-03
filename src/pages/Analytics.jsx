@@ -3,6 +3,7 @@ import { supabase } from '../services/supabase';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Avatar } from '../components/ui/Avatar';
+import { Button } from '../components/ui/Button';
 import { useAuth } from '../context/AuthProvider';
 import { Activity, TrendingUp, Users, Target, Award, AlertTriangle, BarChart3, PieChart, RefreshCw } from 'lucide-react';
 

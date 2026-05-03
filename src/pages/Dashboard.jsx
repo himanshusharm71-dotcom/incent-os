@@ -3,6 +3,7 @@ import { supabase } from '../services/supabase';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { Avatar } from '../components/ui/Avatar';
+import { Button } from '../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthProvider';
 import { 
@@ -121,7 +122,7 @@ function Dashboard() {
   if (loading) return <div style={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontWeight: '800', letterSpacing: '2px' }}>LOADING SYSTEM...</div>;
 
   return (
-    <div className="animate-fade-in perspective-container" style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', paddingBottom: '6rem' }}>
+    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', paddingBottom: '6rem' }}>
       
       {/* GLOBAL ANNOUNCEMENT MARQUEE */}
       <div style={{ background: 'var(--accent-primary)', color: '#fff', padding: '12px', borderRadius: '16px', overflow: 'hidden', display: 'flex', alignItems: 'center', gap: '20px', boxShadow: '0 10px 30px rgba(249,115,22,0.2)' }}>
