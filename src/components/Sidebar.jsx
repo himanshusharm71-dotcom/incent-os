@@ -20,6 +20,11 @@ export function Sidebar({ className = '', onNavClick }) {
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || 'User')}&background=F97316&color=fff`;
   };
 
+  const role = user?.role || 'member';
+  const isAdmin = role === 'super_admin' || role === 'admin';
+  const isLeaderOrAbove = isAdmin || role === 'leader' || role === 'deputy_leader';
+
+  // Common pages — everyone can see
   const navItems = [
     { name: 'Dashboard', path: '/', icon: LayoutDashboard },
     { name: 'Team', path: '/team', icon: Users },
@@ -30,6 +35,7 @@ export function Sidebar({ className = '', onNavClick }) {
     { name: 'Communication', path: '/communication', icon: MessageSquare },
   ];
 
+  // Admin-only pages
   const adminItems = [
     { name: 'User Management', path: '/approvals', icon: Shield },
     { name: 'System Analytics', path: '/analytics', icon: Settings },
@@ -85,7 +91,7 @@ export function Sidebar({ className = '', onNavClick }) {
           </NavLink>
         ))}
 
-        {(user?.role === 'super_admin' || user?.role === 'admin') && (
+        {isAdmin && (
           <>
             <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)', marginBottom: '0.5rem', marginTop: '1.5rem', letterSpacing: '1px' }}>Admin</div>
             {adminItems.map((item) => (
