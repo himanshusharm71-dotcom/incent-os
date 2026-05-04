@@ -14,7 +14,7 @@ import Files from "./pages/Files";
 import Communication from "./pages/Communication";
 import Analytics from "./pages/Analytics";
 import ApprovalQueue from "./pages/ApprovalQueue";
-import AuditLog from "./pages/AuditLog";
+import AuditLogs from "./pages/AuditLogs";
 import Calendar from "./pages/Calendar";
 import Settings from "./pages/Settings";
 import WingPortal from "./pages/WingPortal";
@@ -77,7 +77,7 @@ function App() {
             {/* Admin Only Routes */}
             <Route path="/analytics" element={<ProtectedRoute requireAdmin={true}><Analytics /></ProtectedRoute>} />
             <Route path="/approvals" element={<ProtectedRoute requireAdmin={true}><ApprovalQueue /></ProtectedRoute>} />
-            <Route path="/audit" element={<ProtectedRoute requireAdmin={true}><AuditLog /></ProtectedRoute>} />
+            <Route path="/audit" element={<ProtectedRoute requireAdmin={true}><AuditLogs /></ProtectedRoute>} />
           </Route>
 
           {/* Fallback */}
