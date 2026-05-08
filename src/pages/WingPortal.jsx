@@ -12,16 +12,38 @@ import {
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+// Specialized Modules
+import StartupIncubation from '../components/modules/StartupIncubation';
+import TechDev from '../components/modules/TechDev';
+import CorporateRelations from '../components/modules/CorporateRelations';
+import EventsOperations from '../components/modules/EventsOperations';
+import HiringPlacement from '../components/modules/HiringPlacement';
+import PublicityMarketing from '../components/modules/PublicityMarketing';
+import DesignCreative from '../components/modules/DesignCreative';
+import ResearchStrategy from '../components/modules/ResearchStrategy';
+import DataAnalytics from '../components/modules/DataAnalytics';
+import HackathonMatrix from '../components/modules/HackathonMatrix';
+import OutreachExpansion from '../components/modules/OutreachExpansion';
+import DocumentationVault from '../components/modules/DocumentationVault';
+import AmbassadorNetwork from '../components/modules/AmbassadorNetwork';
+import ExecutiveCommand from '../components/modules/ExecutiveCommand';
+import GeneralModule from '../components/modules/GeneralModule';
 const TEAM_CONFIG = {
-  'Core':                   { color: '#F97316', icon: Shield,      desc: 'Central Command & Strategy' },
-  'Technical Support':      { color: '#3B82F6', icon: Zap,         desc: 'Digital Core & Systems Management' },
-  'Event Management':       { color: '#8B5CF6', icon: Calendar,    desc: 'Experience Orchestration & Execution' },
-  'Startup & Innovation':   { color: '#10B981', icon: Rocket,      desc: 'Innovation Lab & Future Research' },
-  'Corporate Relations':    { color: '#F59E0B', icon: Target,      desc: 'Strategic Partnerships & Industry' },
-  'Public Relations':       { color: '#EC4899', icon: Globe,       desc: 'Global Communication & Narrative' },
-  'Social Media & Branding':{ color: '#06B6D4', icon: MessageSquare, desc: 'Creative Vision & Visual Identity' },
-  'Academic & Research':    { color: '#6366F1', icon: FileText,    desc: 'Knowledge Base & Scholarly Excellence' },
-  'Cultural & Creative':    { color: '#F43F5E', icon: Star,        desc: 'Arts, Culture & Creative Expression' }
+  'Core':                         { color: '#F97316', icon: Shield,      desc: 'Central Command, Strategy & Executive Governance' },
+  'Startup & Incubation':         { color: '#10B981', icon: Rocket,      desc: 'Nurturing Innovation & Scaling Future Ventures' },
+  'Research & Strategy':          { color: '#6366F1', icon: Target,      desc: 'Intelligence Gathering & Strategic Planning' },
+  'Corporate Relations & MOU':    { color: '#F59E0B', icon: Target,   desc: 'Industry Partnerships & Formal Alliances' },
+  'Outreach & Expansion':         { color: '#EC4899', icon: Globe,       desc: 'Global Network Growth & External Relations' },
+  'Tech & Development':           { color: '#3B82F6', icon: Zap,    desc: 'Digital Architecture & Software Ecosystems' },
+  'Data Analytics & Insights':    { color: '#06B6D4', icon: Target,   desc: 'Numerical Intelligence & Performance Metrics' },
+  'Public Relations (PR)':        { color: '#8B5CF6', icon: Megaphone,   desc: 'Brand Narrative & Media Communications' },
+  'Marketing & Media':            { color: '#F97316', icon: MessageSquare,      desc: 'Digital Growth, Content & Social Presence' },
+  'Design & Creative':            { color: '#F43F5E', icon: Star,     desc: 'Visual Identity, UX & Aesthetic Excellence' },
+  'Events & Operations':          { color: '#84CC16', icon: Calendar,    desc: 'Logistics, Orchestration & Live Execution' },
+  'Competitions & Hackathon':     { color: '#EAB308', icon: Trophy,      desc: 'Competitive Excellence & Talent Scouting' },
+  'Documentation':                { color: '#64748B', icon: FileText,    desc: 'Archival Integrity & Knowledge Management' },
+  'Campus Ambassadors':           { color: '#A855F7', icon: Users,       desc: 'Institutional Network & Student Leadership' },
+  'Placement & Startup Hiring':   { color: '#14B8A6', icon: Target,   desc: 'Career Pathways & Talent Acquisition' }
 };
 
 function WingPortal({ preview = false }) {
@@ -146,7 +168,7 @@ function WingPortal({ preview = false }) {
       </div>
 
       {/* PORTAL HERO */}
-      <div style={{ padding: '3rem', background: `linear-gradient(135deg, #fff 0%, ${config.color}08 100%)`, borderRadius: '28px', border: `1px solid ${config.color}20`, position: 'relative', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.02)' }}>
+      <div className="card-3d bg-gradient-4d" style={{ padding: '3rem', background: `linear-gradient(135deg, rgba(255,255,255,0.9) 0%, ${config.color}15 100%)`, borderRadius: '28px', border: `1px solid ${config.color}20`, position: 'relative', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.02)' }}>
         <Badge style={{ marginBottom: '1.25rem', background: config.color, color: '#fff', border: 'none', padding: '6px 16px', borderRadius: '20px', fontWeight: '800', fontSize: '0.65rem' }}>
           {targetTeam.toUpperCase()} WING CORE
         </Badge>
@@ -167,8 +189,29 @@ function WingPortal({ preview = false }) {
             Task Matrix
           </Button>
         </div>
-        <config.icon size={280} color={config.color} style={{ position: 'absolute', right: '-40px', top: '-40px', opacity: 0.04, transform: 'rotate(-10deg)' }} />
+        <config.icon size={280} color={config.color} className="floating-4d" style={{ position: 'absolute', right: '-40px', top: '-40px', opacity: 0.06, transform: 'rotate(-10deg)' }} />
       </div>
+
+      {(() => {
+        switch(targetTeam) {
+          case 'Core': return <ExecutiveCommand team={targetTeam} />;
+          case 'Startup & Incubation': return <StartupIncubation team={targetTeam} />;
+          case 'Tech & Development': return <TechDev team={targetTeam} />;
+          case 'Corporate Relations & MOU': return <CorporateRelations team={targetTeam} />;
+          case 'Events & Operations': return <EventsOperations team={targetTeam} />;
+          case 'Placement & Startup Hiring': return <HiringPlacement team={targetTeam} />;
+          case 'Public Relations (PR)': 
+          case 'Marketing & Media': return <PublicityMarketing team={targetTeam} />;
+          case 'Design & Creative': return <DesignCreative team={targetTeam} />;
+          case 'Research & Strategy': return <ResearchStrategy team={targetTeam} />;
+          case 'Data Analytics & Insights': return <DataAnalytics team={targetTeam} />;
+          case 'Competitions & Hackathon': return <HackathonMatrix team={targetTeam} />;
+          case 'Outreach & Expansion': return <OutreachExpansion team={targetTeam} />;
+          case 'Documentation': return <DocumentationVault team={targetTeam} />;
+          case 'Campus Ambassadors': return <AmbassadorNetwork team={targetTeam} />;
+          default: return <GeneralModule team={targetTeam} />;
+        }
+      })()}
 
       {/* STATS ROW */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1.5rem' }}>

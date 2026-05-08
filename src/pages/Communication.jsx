@@ -37,14 +37,16 @@ function Communication() {
       name: 'Leaders Group', 
       icon: Crown, 
       color: '#F59E0B', 
-      access: ['super_admin', 'admin', 'leader'] 
+      access: ['super_admin', 'admin', 'leader'],
+      canPost: ['super_admin', 'admin', 'leader'] 
     },
     { 
       id: 'Deputies', 
       name: 'Deputy Leaders Group', 
       icon: Shield, 
       color: '#6366F1', 
-      access: ['super_admin', 'admin', 'leader', 'deputy_leader'] 
+      access: ['super_admin', 'admin', 'leader', 'deputy_leader'],
+      canPost: ['super_admin', 'admin', 'leader', 'deputy_leader']
     },
     { 
       id: 'Volunteers', 
@@ -56,9 +58,9 @@ function Communication() {
     },
   ];
 
-  const currentChannel = channels.find(c => c.id === activeChannel);
-  const canIWrite = currentChannel.canPost === 'all' || currentChannel.canPost.includes(user?.role);
-  const hasAccess = currentChannel.access === 'all' || currentChannel.access.includes(user?.role);
+  const currentChannel = channels.find(c => c.id === activeChannel) || channels[0];
+  const canIWrite = currentChannel.canPost === 'all' || (Array.isArray(currentChannel.canPost) && currentChannel.canPost.includes(user?.role));
+  const hasAccess = currentChannel.access === 'all' || (Array.isArray(currentChannel.access) && currentChannel.access.includes(user?.role));
 
   useEffect(() => {
     if (hasAccess) {
@@ -211,7 +213,7 @@ function Communication() {
           {loading ? <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>Syncing encrypted messages...</div> : 
            messages.length === 0 ? <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>No messages yet in #{activeChannel}. Be the first to start!</div> :
            messages.map((msg) => {
-            const isMe = msg.user_id === user?.uid || msg.user_name?.toLowerCase().includes('himanshu');
+            const isMe = msg.user_id === user?.uid || (msg.user_name || '').toLowerCase().includes('himanshu');
             return (
               <div key={msg.id} style={{ display: 'flex', gap: '12px', maxWidth: '85%', alignSelf: isMe ? 'flex-end' : 'flex-start', flexDirection: isMe ? 'row-reverse' : 'row' }}>
                 <Avatar src={`https://ui-avatars.com/api/?name=${encodeURIComponent(msg.user_name)}&background=random`} size="sm" />

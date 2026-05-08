@@ -40,12 +40,10 @@ function Layout() {
       )}
 
       {/* Overlay */}
-      {isMobile && sidebarOpen && (
-        <div
-          className="sidebar-overlay active"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+      <div
+        className={`sidebar-overlay ${isMobile && sidebarOpen ? 'active' : ''}`}
+        onClick={() => setSidebarOpen(false)}
+      />
 
       {/* Sidebar */}
       <Sidebar
@@ -54,19 +52,12 @@ function Layout() {
       />
 
       {/* Main Content */}
-      <div style={{
-        flex: 1,
-        marginLeft: isMobile ? 0 : '260px',
-        display: 'flex',
-        flexDirection: 'column',
-        minWidth: 0,
-      }}>
+      <div className="main-content" style={{ flex: 1, minWidth: 0 }}>
         <Topbar />
-        <main style={{
-          padding: isMobile ? '1rem' : '2rem',
-          paddingTop: isMobile ? '4.5rem' : '2rem',
-          flex: 1,
-          overflowY: 'auto',
+        <main style={{ 
+          padding: isMobile ? '1.5rem' : '2.5rem', 
+          paddingTop: isMobile ? '5rem' : '2rem',
+          flex: 1 
         }}>
           <Outlet />
         </main>

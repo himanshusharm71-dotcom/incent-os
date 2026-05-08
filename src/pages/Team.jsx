@@ -15,7 +15,13 @@ function Team() {
   const [loading, setLoading] = useState(true);
   
   const isAdmin = user?.role === 'super_admin' || user?.role === 'admin';
-  const allTeams = ['Core', 'Technical Support', 'Event Management', 'Startup & Innovation', 'Corporate Relations', 'Public Relations', 'Social Media & Branding'];
+  const allTeams = [
+    'Startup & Incubation', 'Research & Strategy', 'Corporate Relations & MOU', 
+    'Outreach & Expansion', 'Tech & Development', 'Data Analytics & Insights', 
+    'Public Relations (PR)', 'Marketing & Media', 'Design & Creative', 
+    'Events & Operations', 'Competitions & Hackathon', 'Documentation', 
+    'Campus Ambassadors', 'Placement & Startup Hiring'
+  ];
 
   useEffect(() => {
     fetchMembers();
@@ -63,6 +69,7 @@ function Team() {
   };
 
   const getUserPoints = (name) => {
+    if (!name) return 0;
     const u = members.find(m => m.Name?.toLowerCase().includes(name.toLowerCase()));
     return u ? (u.points || 0) : 0;
   };

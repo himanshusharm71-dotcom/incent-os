@@ -117,12 +117,20 @@ function Dashboard() {
   ];
 
   const wings = [
-    { name: 'Technical Support', color: '#3B82F6', icon: Zap, desc: 'Systems & Infrastructure' },
-    { name: 'Event Management', color: '#8B5CF6', icon: Calendar, desc: 'Planning & Execution' },
-    { name: 'Startup & Innovation', color: '#10B981', icon: Rocket, desc: 'Research & Development' },
-    { name: 'Corporate Relations', color: '#F59E0B', icon: Target, desc: 'B2B & Partnerships' },
-    { name: 'Public Relations', color: '#EC4899', icon: Globe, desc: 'Media & Communications' },
-    { name: 'Social Media & Branding', color: '#06B6D4', icon: MessageSquare, desc: 'Identity & Growth' }
+    { name: 'Startup & Incubation', color: '#10B981', icon: Rocket, desc: 'Nurturing Innovation' },
+    { name: 'Research & Strategy', color: '#6366F1', icon: Target, desc: 'Intelligence Gathering' },
+    { name: 'Corporate Relations & MOU', color: '#F59E0B', icon: Target, desc: 'Industry Partnerships' },
+    { name: 'Outreach & Expansion', color: '#EC4899', icon: Globe, desc: 'Global Network Growth' },
+    { name: 'Tech & Development', color: '#3B82F6', icon: Zap, desc: 'Digital Architecture' },
+    { name: 'Data Analytics & Insights', color: '#06B6D4', icon: Target, desc: 'Numerical Intelligence' },
+    { name: 'Public Relations (PR)', color: '#8B5CF6', icon: Globe, desc: 'Brand Narrative' },
+    { name: 'Marketing & Media', color: '#F97316', icon: MessageSquare, desc: 'Digital Growth' },
+    { name: 'Design & Creative', color: '#F43F5E', icon: Target, desc: 'Visual Identity' },
+    { name: 'Events & Operations', color: '#84CC16', icon: Calendar, desc: 'Logistics' },
+    { name: 'Competitions & Hackathon', color: '#EAB308', icon: Rocket, desc: 'Talent Scouting' },
+    { name: 'Documentation', color: '#64748B', icon: Calendar, desc: 'Knowledge Management' },
+    { name: 'Campus Ambassadors', color: '#A855F7', icon: Globe, desc: 'Student Leadership' },
+    { name: 'Placement & Startup Hiring', color: '#14B8A6', icon: Target, desc: 'Talent Acquisition' }
   ];
 
   if (loading) return (
@@ -151,8 +159,8 @@ function Dashboard() {
       </div>
 
       {/* ── HERO COMMAND CENTER ── */}
-      <div className="card-3d" style={{ 
-        padding: '4rem 3rem', background: 'linear-gradient(145deg, #ffffff 0%, #fffbf0 100%)', 
+      <div className="card-3d bg-gradient-4d" style={{ 
+        padding: '4rem 3rem', background: 'linear-gradient(145deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%)', 
         borderRadius: '40px', border: '1px solid rgba(249,115,22,0.15)', position: 'relative', overflow: 'hidden',
         boxShadow: '0 30px 60px rgba(249,115,22,0.08)'
       }}>
@@ -164,14 +172,14 @@ function Dashboard() {
             Command <br /> <span style={{ color: 'var(--accent-primary)' }}>Center</span>
           </h1>
           <p style={{ margin: '1rem 0 2rem', color: 'var(--text-secondary)', fontSize: '1.25rem', maxWidth: '600px', fontWeight: '500', lineHeight: 1.6 }}>
-            Seamlessly managing <strong>{stats.totalMembers} team members</strong> across 9 wings. Real-time operations and executive monitoring active.
+            Seamlessly managing <strong>{stats.totalMembers} team members</strong> across 14 specialized wings. Real-time operations and executive monitoring active.
           </p>
           <div style={{ display: 'flex', gap: '1rem' }}>
             <Button onClick={() => navigate('/communication')} variant="primary" style={{ padding: '15px 30px', borderRadius: '16px' }} icon={<MessageSquare size={18} />}>Join Discussion</Button>
             <Button onClick={() => navigate('/analytics')} variant="secondary" style={{ padding: '15px 30px', borderRadius: '16px' }} icon={<BarChart3 size={18} />}>View Telemetry</Button>
           </div>
         </div>
-        <LayoutDashboard size={400} color="var(--accent-primary)" style={{ position: 'absolute', right: '-80px', top: '-50px', opacity: 0.03, transform: 'rotate(-10deg)' }} />
+        <LayoutDashboard size={400} color="var(--accent-primary)" className="floating-4d" style={{ position: 'absolute', right: '-80px', top: '-50px', opacity: 0.05, transform: 'rotate(-10deg)' }} />
       </div>
 
       {/* ── QUICK STATS MATRIX ── */}
@@ -253,7 +261,7 @@ function Dashboard() {
                   }} 
                   onMouseOver={(e) => e.target.style.background = wing.color}
                   onMouseOut={(e) => e.target.style.background = 'var(--text-primary)'}
-                  onClick={() => navigate(`/portal/${wing.name}`)}
+                  onClick={() => navigate(`/portal/${encodeURIComponent(wing.name)}`)}
                 >
                   ACCESS PORTAL
                 </button>

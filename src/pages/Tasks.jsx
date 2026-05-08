@@ -81,8 +81,8 @@ function Tasks() {
   ];
 
   const filteredTasks = tasks.filter(t => 
-    t.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    t.assignedTo.toLowerCase().includes(searchTerm.toLowerCase())
+    (t.title || '').toLowerCase().includes((searchTerm || '').toLowerCase()) || 
+    (t.assignedTo || '').toLowerCase().includes((searchTerm || '').toLowerCase())
   );
 
   return (
@@ -176,7 +176,7 @@ function Tasks() {
                     transition: 'transform 0.2s'
                   }} className="card-hover">
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '14px', alignItems: 'center' }}>
-                      <Badge variant={t.priority === 'High' ? 'danger' : t.priority === 'Medium' ? 'warning' : 'success'} style={{ fontSize: '0.6rem', padding: '2px 8px' }}>{t.priority.toUpperCase()}</Badge>
+                      <Badge variant={t.priority === 'High' ? 'danger' : t.priority === 'Medium' ? 'warning' : 'success'} style={{ fontSize: '0.6rem', padding: '2px 8px' }}>{(t.priority || 'Medium').toUpperCase()}</Badge>
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                         <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: '700' }}><CalIcon size={12}/> {t.deadline}</span>
                         {isAdmin && (

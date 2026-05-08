@@ -31,23 +31,31 @@ function AuthProvider({ children }) {
       }
 
       // 2. Verify with Supabase Session
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session?.user) {
-        await refreshUserProfile(session.user.id, session.user.email);
-      } else {
-        // If no supabase session, check if it was a master login
-        const masterData = localStorage.getItem('incent_auth_user');
-        if (masterData) {
-            const parsed = JSON.parse(masterData);
-            if (!parsed.isMaster) {
-                // Not master and no session? Logout.
-                persistUser(null);
-            }
+      const sessionTimeout = setTimeout(() => {
+        console.warn("⚠️ Auth sync taking too long... forcing boot.");
+        setLoading(false);
+      }, 5000); // 5 second safety limit
+
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        clearTimeout(sessionTimeout);
+        
+        if (session?.user) {
+          await refreshUserProfile(session.user.id, session.user.email);
         } else {
-            persistUser(null);
+          const masterData = localStorage.getItem('incent_auth_user');
+          if (masterData) {
+              const parsed = JSON.parse(masterData);
+              if (!parsed.isMaster) persistUser(null);
+          } else {
+              persistUser(null);
+          }
         }
+      } catch (err) {
+        console.error("Auth Init Error:", err);
+        clearTimeout(sessionTimeout);
       }
+      
       setLoading(false);
     };
 
@@ -110,9 +118,21 @@ function AuthProvider({ children }) {
   return (
     <AuthContext.Provider value={{ user, loading, login, logout }}>
       {loading && !user ? (
-        <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: '#F8FAFC', color: '#F97316' }}>
-          <div style={{ width: '40px', height: '40px', border: '4px solid rgba(249,115,22,0.1)', borderTopColor: '#F97316', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
-          <p style={{ marginTop: '20px', fontWeight: '900', letterSpacing: '2px', fontSize: '0.8rem' }}>RESTORING SESSION...</p>
+        <div style={{ 
+          height: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', 
+          justifyContent: 'center', background: '#020617', color: 'var(--accent-primary)',
+          position: 'relative', overflow: 'hidden'
+        }}>
+          {/* Neural Orbits */}
+          <div style={{ position: 'absolute', width: '300px', height: '300px', border: '1px solid rgba(249,115,22,0.1)', borderRadius: '50%', animation: 'spin 10s linear infinite' }}></div>
+          <div style={{ position: 'absolute', width: '200px', height: '200px', border: '1px dashed rgba(249,115,22,0.2)', borderRadius: '50%', animation: 'spin 6s linear reverse infinite' }}></div>
+          
+          <div style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
+            <div style={{ width: '60px', height: '60px', border: '3px solid rgba(249,115,22,0.1)', borderTopColor: 'var(--accent-primary)', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 2rem', boxShadow: '0 0 30px rgba(249,115,22,0.2)' }}></div>
+            <p style={{ fontWeight: '900', letterSpacing: '6px', fontSize: '1rem', margin: 0, textShadow: '0 0 10px rgba(249,115,22,0.4)' }}>RESTORING NEURAL LINK</p>
+            <p style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.3)', marginTop: '10px', fontWeight: '800', letterSpacing: '2px' }}>DECRYPTING SESSION DATA...</p>
+          </div>
+          
           <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
       ) : children}

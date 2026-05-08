@@ -4,12 +4,14 @@ import "./index.css";
 import App from "./App";
 import AuthProvider from "./context/AuthProvider";
 
-const root = document.getElementById("root");
+const rootElement = document.getElementById("root");
 
-ReactDOM.createRoot(root).render(
-  <React.StrictMode>
+if (rootElement) {
+  ReactDOM.createRoot(rootElement).render(
     <AuthProvider>
       <App />
     </AuthProvider>
-  </React.StrictMode>
-);
+  );
+} else {
+  console.error("🛑 FATAL: Root element '#root' not found.");
+}

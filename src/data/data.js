@@ -1,11 +1,19 @@
 export const teams = [
   "Core",
-  "Technical Support",
-  "Event Management",
-  "Startup & Innovation",
-  "Corporate Relations",
-  "Public Relations",
-  "Social Media & Branding"
+  "Startup & Incubation",
+  "Research & Strategy",
+  "Corporate Relations & MOU",
+  "Outreach & Expansion",
+  "Tech & Development",
+  "Data Analytics & Insights",
+  "Public Relations (PR)",
+  "Marketing & Media",
+  "Design & Creative",
+  "Events & Operations",
+  "Competitions & Hackathon",
+  "Documentation",
+  "Campus Ambassadors",
+  "Placement & Startup Hiring"
 ];
 
 export const members = [

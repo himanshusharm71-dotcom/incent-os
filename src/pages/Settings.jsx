@@ -60,8 +60,8 @@ function Settings() {
                     <h2 style={{ margin: '0 0 5px 0' }}>{user?.Name || 'User'}</h2>
                     <p style={{ margin: '0 0 12px 0', color: 'var(--text-muted)' }}>{user?.email}</p>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      <Badge variant="primary">{user?.role?.replace('_', ' ').toUpperCase()}</Badge>
-                      <Badge variant="info">{user?.team}</Badge>
+                      <Badge variant="primary">{(user?.role?.replace('_', ' ') || 'member').toUpperCase()}</Badge>
+                      <Badge variant="info">{user?.team || 'Core'}</Badge>
                     </div>
                   </div>
                 </div>
@@ -81,7 +81,7 @@ function Settings() {
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '600', color: 'var(--text-muted)', marginBottom: '8px' }}>Role</label>
-                    <input value={user?.role?.replace('_', ' ').toUpperCase() || ''} readOnly style={{ background: 'rgba(0,0,0,0.02)' }} />
+                    <input value={(user?.role?.replace('_', ' ') || 'member').toUpperCase()} readOnly style={{ background: 'rgba(0,0,0,0.02)' }} />
                   </div>
                 </div>
               </Card>
@@ -98,7 +98,7 @@ function Settings() {
                   <div style={{ padding: '12px', background: 'rgba(99,102,241,0.1)', borderRadius: '12px' }}><Users color="#6366F1" /></div>
                   <div>
                     <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-muted)' }}>Membership Status</p>
-                    <h3 style={{ margin: 0 }}>{user?.status?.toUpperCase() || 'ACTIVE'}</h3>
+                    <h3 style={{ margin: 0 }}>{(user?.status || 'ACTIVE').toUpperCase()}</h3>
                   </div>
                 </Card>
               </div>
