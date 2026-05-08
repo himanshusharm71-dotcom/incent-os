@@ -78,7 +78,9 @@ export default function GeneralModule({ team, stats }) {
               <div style={{ position: 'absolute', width: 60, height: 60, border: '2px solid var(--accent-primary)', borderRadius: '50%', animation: 'pulse 2s infinite' }}></div>
               <Cpu size={30} color="var(--accent-primary)" />
            </div>
-           <button className="primary" style={{ width: '100%', marginTop: '2.5rem', fontSize: '0.85rem' }}>SYNC SECTOR DIRECTORY</button>
+           <Button variant="primary" style={{ width: '100%', marginTop: '2.5rem' }} onClick={() => alert("Syncing Sector Directory...")}>
+             SYNC SECTOR DIRECTORY
+           </Button>
         </Card>
 
       </div>

@@ -21,7 +21,10 @@ export function Button({
     transition: 'all 0.2s ease',
     border: 'none',
     outline: 'none',
-    fontFamily: 'inherit'
+    fontFamily: 'inherit',
+    position: 'relative',
+    zIndex: 2,
+    pointerEvents: 'auto'
   };
 
   const variants = {
@@ -45,12 +48,23 @@ export function Button({
     }
   };
 
-  // Provide hover effects via CSS or inline (using a simple class for hover in CSS would be better, but inline is fine for baseline if CSS isn't fully defined for buttons. We'll rely on the base variants for now.)
-
   return (
     <button 
-      style={{ ...baseStyle, ...variants[variant] }}
+      style={{ 
+        ...baseStyle, 
+        ...variants[variant],
+        ...(props.disabled ? { opacity: 0.5, cursor: 'not-allowed' } : {})
+      }}
       className={`btn-${variant} ${className}`}
+      onMouseDown={(e) => {
+        e.currentTarget.style.transform = 'scale(0.96)';
+      }}
+      onMouseUp={(e) => {
+        e.currentTarget.style.transform = 'scale(1)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'scale(1)';
+      }}
       {...props}
     >
       {icon && <span>{icon}</span>}

@@ -164,6 +164,9 @@ function Communication() {
                 <div 
                   key={ch.id}
                   onClick={() => chAccess && setActiveChannel(ch.id)}
+                  onMouseDown={(e) => chAccess && (e.currentTarget.style.transform = 'scale(0.98)')}
+                  onMouseUp={(e) => chAccess && (e.currentTarget.style.transform = 'scale(1)')}
+                  onMouseLeave={(e) => chAccess && (e.currentTarget.style.transform = 'scale(1)')}
                   style={{
                     display: 'flex', alignItems: 'center', gap: '12px',
                     padding: '12px', borderRadius: '12px',
@@ -172,7 +175,8 @@ function Communication() {
                     border: activeChannel === ch.id ? `1px solid ${ch.color}30` : '1px solid transparent',
                     color: activeChannel === ch.id ? ch.color : 'var(--text-primary)',
                     opacity: chAccess ? 1 : 0.5,
-                    transition: 'all 0.2s'
+                    transition: 'all 0.2s',
+                    userSelect: 'none'
                   }}
                 >
                   <ch.icon size={18} />

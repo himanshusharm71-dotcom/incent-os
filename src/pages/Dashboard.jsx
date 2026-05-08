@@ -253,18 +253,13 @@ function Dashboard() {
                 </div>
                 <h4 style={{ margin: '0 0 8px', fontSize: '1.1rem', fontWeight: '800' }}>{wing.name}</h4>
                 <p style={{ margin: '0 0 1.5rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>{wing.desc}</p>
-                <button 
-                  style={{ 
-                    background: 'var(--text-primary)', color: '#fff', width: '100%', padding: '12px', 
-                    border: 'none', borderRadius: '14px', fontWeight: '700', cursor: 'pointer', fontSize: '0.8rem',
-                    transition: 'all 0.3s'
-                  }} 
-                  onMouseOver={(e) => e.target.style.background = wing.color}
-                  onMouseOut={(e) => e.target.style.background = 'var(--text-primary)'}
+                <Button 
+                  variant="primary"
+                  style={{ width: '100%', borderRadius: '14px', padding: '12px', fontWeight: '800' }}
                   onClick={() => navigate(`/portal/${encodeURIComponent(wing.name)}`)}
                 >
                   ACCESS PORTAL
-                </button>
+                </Button>
               </div>
               <wing.icon size={120} color={wing.color} style={{ position: 'absolute', right: '-20px', bottom: '-20px', opacity: 0.03 }} />
             </Card>

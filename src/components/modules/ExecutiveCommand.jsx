@@ -38,25 +38,23 @@ export default function ExecutiveCommand({ stats }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: '2rem' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          {[
-            { id: 'overview', label: 'STRATEGIC OVERVIEW', icon: Eye },
-            { id: 'analytics', label: 'GLOBAL ANALYTICS', icon: BarChart3 },
-            { id: 'governance', label: 'GOVERNANCE MODS', icon: Lock },
-            { id: 'risk', label: 'RISK ASSESSMENT', icon: AlertTriangle }
-          ].map(tool => (
-            <button 
-              key={tool.id}
-              onClick={() => setActiveTab(tool.id)}
+          {['overview', 'analytics', 'governance', 'risk'].map(id => (
+            <Button 
+              key={id}
+              onClick={() => setActiveTab(id)}
+              variant={activeTab === id ? 'primary' : 'secondary'}
               style={{
-                display: 'flex', alignItems: 'center', gap: '12px', padding: '15px 20px',
-                borderRadius: '16px', 
-                background: activeTab === tool.id ? 'var(--accent-primary)' : 'rgba(0,0,0,0.03)',
-                color: activeTab === tool.id ? '#fff' : 'var(--text-primary)', fontWeight: '800', fontSize: '0.85rem', cursor: 'pointer', transition: 'all 0.3s',
-                textAlign: 'left', border: '1px solid rgba(0,0,0,0.05)'
+                justifyContent: 'flex-start', padding: '15px 20px', borderRadius: '16px', fontSize: '0.85rem'
               }}
+              icon={{
+                overview: <Eye size={18} />, 
+                analytics: <BarChart3 size={18} />, 
+                governance: <Lock size={18} />, 
+                risk: <AlertTriangle size={18} />
+              }[id]}
             >
-              <tool.icon size={18} /> {tool.label}
-            </button>
+              {id.toUpperCase()}
+            </Button>
           ))}
         </div>
 
