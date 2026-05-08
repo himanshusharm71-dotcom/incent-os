@@ -8,8 +8,11 @@ import {
   ClipboardList, Truck, AlertTriangle, ChevronRight, Activity
 } from 'lucide-react';
 
-export default function EventsOperations() {
+export default function EventsOperations({ stats }) {
   const [activeTab, setActiveTab] = useState('upcoming');
+
+  const memberCount = stats?.members?.length || 0;
+  const taskCount = stats?.tasks?.length || 0;
 
   const events = [
     { title: 'Incent Summit 2026', date: 'May 24', location: 'Main Auditorium', status: 'Planning', progress: 65 },
@@ -23,10 +26,10 @@ export default function EventsOperations() {
       {/* ── OPERATIONS HUD ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
         {[
-          { label: 'ACTIVE PROJECTS', val: 6, icon: ClipboardList, color: '#F59E0B' },
-          { label: 'PENDING TASKS', val: 42, icon: ListChecks, color: '#3B82F6' },
-          { label: 'RESOURCE LEVEL', val: '85%', icon: Package, color: '#10B981' },
-          { label: 'SQUAD STRENGTH', val: 71, icon: Users, color: '#8B5CF6' }
+          { label: 'WING PERSONNEL', val: memberCount, icon: Users, color: '#8B5CF6' },
+          { label: 'ACTIVE PROJECTS', val: 'Active', icon: ClipboardList, color: '#F59E0B' },
+          { label: 'PENDING TASKS', val: taskCount, icon: ListChecks, color: '#3B82F6' },
+          { label: 'RESOURCE LEVEL', val: '85%', icon: Package, color: '#10B981' }
         ].map((m, i) => (
           <Card key={i} className="glass-card mouse-glow" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
              <div style={{ padding: '12px', background: `${m.color}15`, borderRadius: '14px' }}>

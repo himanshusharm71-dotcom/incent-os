@@ -8,14 +8,17 @@ import {
   Target, Globe, MousePointer2, Layers
 } from 'lucide-react';
 
-export default function DataAnalytics() {
+export default function DataAnalytics({ stats }) {
   const [activeTab, setActiveTab] = useState('metrics');
 
+  const memberCount = stats?.members?.length || 0;
+  const taskCount = stats?.tasks?.length || 0;
+
   const kpis = [
-    { label: 'Platform Engagement', val: '+24.5%', status: 'optimal' },
-    { label: 'Neural Link Latency', val: '12ms', status: 'optimal' },
-    { label: 'Resource Utilization', val: '78%', status: 'warning' },
-    { label: 'Data Integrity', val: '99.9%', status: 'optimal' }
+    { label: 'Wing Personnel', val: memberCount, status: 'optimal' },
+    { label: 'Pending Operations', val: taskCount, status: 'optimal' },
+    { label: 'System Integrity', val: '99.9%', status: 'optimal' },
+    { label: 'Data Latency', val: '12ms', status: 'optimal' }
   ];
 
   return (

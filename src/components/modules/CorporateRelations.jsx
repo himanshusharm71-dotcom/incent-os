@@ -8,8 +8,11 @@ import {
   ShieldCheck, Briefcase, BarChart
 } from 'lucide-react';
 
-export default function CorporateRelations() {
-  const [activeTab, setActiveTab] = useState('crm');
+export default function CorporateRelations({ stats }) {
+  const [activeTab, setActiveTab] = useState('partners');
+
+  const memberCount = stats?.members?.length || 0;
+  const taskCount = stats?.tasks?.length || 0;
 
   const partners = [
     { name: 'Google Cloud', status: 'Signed', type: 'Technology', value: 'Enterprise' },
@@ -21,12 +24,12 @@ export default function CorporateRelations() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       
       {/* ── PARTNERSHIP HUD ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
         {[
-          { label: 'ACTIVE MOUS', val: '24', icon: FileCheck, color: '#10B981' },
-          { label: 'PIPELINE VALUE', val: '$45k', icon: TrendingUp, color: '#F59E0B' },
-          { label: 'LEAD CONVERSION', val: '68%', icon: Zap, color: '#3B82F6' },
-          { label: 'RELATIONSHIP NODES', val: '120+', icon: Users, color: '#8B5CF6' }
+          { label: 'WING PERSONNEL', val: memberCount, icon: Handshake, color: '#F97316' },
+          { label: 'ACTIVE MOUs', val: 'Active', icon: FileCheck, color: '#3B82F6' },
+          { label: 'PENDING TASKS', val: taskCount, icon: Target, color: '#8B5CF6' },
+          { label: 'PARTNERSHIP DEPTH', val: '92%', icon: TrendingUp, color: '#10B981' }
         ].map((m, i) => (
           <Card key={i} className="glass-card mouse-glow" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
              <div style={{ padding: '12px', background: `${m.color}15`, borderRadius: '14px' }}>

@@ -28,12 +28,12 @@ export default function StartupIncubation() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       
       {/* ── INCUBATION METRICS ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
         {[
-          { label: 'ACTIVE STARTUPS', val: 14, icon: Rocket, color: '#10B981' },
-          { label: 'AVG EQUITY HELD', val: '12.5%', icon: PieChart, color: '#3B82F6' },
-          { label: 'PIPELINE VALUE', val: '$2.4M', icon: DollarSign, color: '#F59E0B' },
-          { label: 'EXIT VELOCITY', val: 'HIGH', icon: TrendingUp, color: '#F43F5E' }
+          { label: 'WING PERSONNEL', val: memberCount, icon: Rocket, color: '#F97316' },
+          { label: 'ACTIVE VENTURES', val: 'Active', icon: Building, color: '#3B82F6' },
+          { label: 'PENDING TASKS', val: taskCount, icon: Target, color: '#8B5CF6' },
+          { label: 'FUNDING FLOW', val: 'STABLE', icon: Zap, color: '#10B981' }
         ].map((m, i) => (
           <Card key={i} className="glass-card mouse-glow" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
              <div style={{ padding: '12px', background: `${m.color}15`, borderRadius: '14px' }}>

@@ -61,9 +61,10 @@ function AuthProvider({ children }) {
 
     initAuth();
 
-    // Listen for auth changes (Login/Logout)
+    // Listen for auth changes (Login/Logout/Refresh)
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_IN' && session?.user) {
+      console.log("🔔 Auth Event:", event);
+      if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED') && session?.user) {
         await refreshUserProfile(session.user.id, session.user.email);
       } else if (event === 'SIGNED_OUT') {
         persistUser(null);

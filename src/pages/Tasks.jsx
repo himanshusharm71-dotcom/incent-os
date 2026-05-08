@@ -138,7 +138,15 @@ function Tasks() {
                   <option value="High">High Priority</option>
                 </select>
                 <select value={newTask.team} onChange={e => setNewTask({...newTask, team: e.target.value})} disabled={!isAdmin} style={{ width: '100%', padding: '12px', borderRadius: '12px' }}>
-                  {['Core', 'Technical Support', 'Event Management', 'Startup & Innovation', 'Corporate Relations', 'Public Relations', 'Social Media & Branding'].map(t => <option key={t} value={t}>{t}</option>)}
+                  {[
+                    'Core', 'Startup & Incubation', 'Tech & Development', 
+                    'Corporate Relations & MOU', 'Events & Operations', 
+                    'Placement & Startup Hiring', 'Public Relations (PR)', 
+                    'Marketing & Media', 'Design & Creative', 
+                    'Research & Strategy', 'Data Analytics & Insights', 
+                    'Competitions & Hackathon', 'Outreach & Expansion', 
+                    'Documentation', 'Campus Ambassadors'
+                  ].map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
               <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>

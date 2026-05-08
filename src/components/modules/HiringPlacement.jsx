@@ -8,8 +8,11 @@ import {
   UserPlus, Mail, Phone, ExternalLink, ChevronRight, Activity
 } from 'lucide-react';
 
-export default function HiringPlacement() {
+export default function HiringPlacement({ stats }) {
   const [activeTab, setActiveTab] = useState('hiring');
+
+  const memberCount = stats?.members?.length || 0;
+  const taskCount = stats?.tasks?.length || 0;
 
   const jobs = [
     { title: 'Frontend Lead', company: 'Neural Systems', type: 'Full-time', applicants: 12, status: 'Active' },
@@ -23,9 +26,9 @@ export default function HiringPlacement() {
       {/* ── PLACEMENT HUD ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
         {[
-          { label: 'ACTIVE LISTINGS', val: 12, icon: Briefcase, color: '#F59E0B' },
-          { label: 'TOTAL TALENT', val: '450+', icon: Users, color: '#3B82F6' },
-          { label: 'SUCCESS RATE', val: '92%', icon: CheckCircle2, color: '#10B981' },
+          { label: 'WING PERSONNEL', val: memberCount, icon: Users, color: '#3B82F6' },
+          { label: 'ACTIVE LISTINGS', val: 'Active', icon: Briefcase, color: '#F59E0B' },
+          { label: 'PENDING TASKS', val: taskCount, icon: CheckCircle2, color: '#10B981' },
           { label: 'OPEN SECTORS', val: 5, icon: GraduationCap, color: '#8B5CF6' }
         ].map((m, i) => (
           <Card key={i} className="glass-card mouse-glow" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>

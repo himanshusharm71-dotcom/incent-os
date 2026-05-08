@@ -8,8 +8,8 @@ import {
   ChevronRight, Lock, Network
 } from 'lucide-react';
 
-export default function TechDev() {
-  const [activeTab, setActiveTab] = useState('health');
+export default function TechDev({ stats }) {
+  const [activeTab, setActiveTab] = useState('ops');
   const [logs, setLogs] = useState([
     { time: '20:45:12', type: 'INFO', msg: 'Neural Link Synchronized' },
     { time: '20:46:05', type: 'WARN', msg: 'Latency spike detected in AP-South region' },
@@ -17,6 +17,9 @@ export default function TechDev() {
   ]);
   const [apiPing, setApiPing] = useState('');
   const [pingResult, setPingResult] = useState(null);
+
+  const memberCount = stats?.members?.length || 0;
+  const taskCount = stats?.tasks?.length || 0;
 
   const handlePing = () => {
     if (!apiPing) return;
@@ -27,10 +30,10 @@ export default function TechDev() {
   };
 
   const serverMetrics = [
-    { label: 'Uptime', val: '99.99%', icon: Activity, color: '#10B981' },
-    { label: 'Latency', val: '24ms', icon: Wifi, color: '#3B82F6' },
-    { label: 'Memory', val: '4.2GB / 8GB', icon: HardDrive, color: '#F59E0B' },
-    { label: 'Load', val: '12%', icon: Cpu, color: '#8B5CF6' }
+    { label: 'WING PERSONNEL', val: memberCount, icon: Terminal, color: '#3B82F6' },
+    { label: 'SYSTEM STABILITY', val: '99.9%', icon: Shield, color: '#10B981' },
+    { label: 'ACTIVE TASKS', val: taskCount, icon: Cpu, color: '#8B5CF6' },
+    { label: 'DEPLOY VELOCITY', val: 'MAX', icon: Zap, color: '#F43F5E' }
   ];
 
   return (

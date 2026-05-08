@@ -8,13 +8,21 @@ import { Badge } from '../components/ui/Badge';
 
 // ── CONFIG: Real Google Drive Links Integrated ──────────
 const TEAM_DRIVE_LINKS = {
-  'Core': 'https://drive.google.com/drive/folders/YOUR_PRIVATE_CORE_DRIVE_LINK', // Admin Only
-  'Technical Support': 'https://drive.google.com/drive/folders/19awLJSNAyL6JGwCefNIKH1oTSpdFGCDM?usp=drive_link',
-  'Event Management': 'https://drive.google.com/drive/folders/1MfIAXwa_33oSmTW1PtCkfl9WZ4FKcK3l?usp=drive_link',
-  'Startup & Innovation': 'https://drive.google.com/drive/folders/1yBORyZ5eLn5nfaBx7lrniCpYe4Z3cFik?usp=drive_link',
-  'Corporate Relations': 'https://drive.google.com/drive/folders/1fGgSxBhmc3yKxeYbWC8fu1NgBIG6sN_V?usp=drive_link',
-  'Public Relations': 'https://drive.google.com/drive/folders/1Fm0JtQmHB_hwNFK7WCFSzFnhKxtTCLzv?usp=drive_link',
-  'Social Media & Branding': 'https://drive.google.com/drive/folders/1UWQjUBBnJZZ2I7X3Ta_a8ZMi3tIEIBxV?usp=drive_link'
+  'Core': 'https://drive.google.com/drive/folders/1pX_xS_...', // Admin Only
+  'Startup & Incubation': 'https://drive.google.com/drive/folders/1yBORyZ5eLn5nfaBx7lrniCpYe4Z3cFik',
+  'Tech & Development': 'https://drive.google.com/drive/folders/19awLJSNAyL6JGwCefNIKH1oTSpdFGCDM',
+  'Corporate Relations & MOU': 'https://drive.google.com/drive/folders/1fGgSxBhmc3yKxeYbWC8fu1NgBIG6sN_V',
+  'Events & Operations': 'https://drive.google.com/drive/folders/1MfIAXwa_33oSmTW1PtCkfl9WZ4FKcK3l',
+  'Placement & Startup Hiring': 'https://drive.google.com/drive/folders/1fGgSxBhmc3yKxeYbWC8fu1NgBIG6sN_V',
+  'Public Relations (PR)': 'https://drive.google.com/drive/folders/1Fm0JtQmHB_hwNFK7WCFSzFnhKxtTCLzv',
+  'Marketing & Media': 'https://drive.google.com/drive/folders/1UWQjUBBnJZZ2I7X3Ta_a8ZMi3tIEIBxV',
+  'Design & Creative': 'https://drive.google.com/drive/folders/1UWQjUBBnJZZ2I7X3Ta_a8ZMi3tIEIBxV',
+  'Research & Strategy': 'https://drive.google.com/drive/folders/1Fm0JtQmHB_hwNFK7WCFSzFnhKxtTCLzv',
+  'Data Analytics & Insights': 'https://drive.google.com/drive/folders/19awLJSNAyL6JGwCefNIKH1oTSpdFGCDM',
+  'Competitions & Hackathon': 'https://drive.google.com/drive/folders/1MfIAXwa_33oSmTW1PtCkfl9WZ4FKcK3l',
+  'Outreach & Expansion': 'https://drive.google.com/drive/folders/1yBORyZ5eLn5nfaBx7lrniCpYe4Z3cFik',
+  'Documentation': 'https://drive.google.com/drive/folders/1Fm0JtQmHB_hwNFK7WCFSzFnhKxtTCLzv',
+  'Campus Ambassadors': 'https://drive.google.com/drive/folders/1pX_xS_...'
 };
 
 function Files() {

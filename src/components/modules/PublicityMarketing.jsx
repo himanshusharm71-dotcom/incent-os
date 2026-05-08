@@ -9,8 +9,11 @@ import {
   ChevronRight, Activity
 } from 'lucide-react';
 
-export default function PublicityMarketing() {
+export default function PublicityMarketing({ stats }) {
   const [activeTab, setActiveTab] = useState('analytics');
+
+  const memberCount = stats?.members?.length || 0;
+  const taskCount = stats?.tasks?.length || 0;
 
   const campaigns = [
     { name: 'INCENT Launch 2026', platform: 'Instagram', reach: '24.5k', engagement: '8.2%', status: 'Active' },
@@ -24,10 +27,10 @@ export default function PublicityMarketing() {
       {/* ── MARKETING HUD ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
         {[
-          { label: 'TOTAL REACH', val: '45.2k', icon: Globe, color: '#3B82F6' },
-          { label: 'AVG ENGAGEMENT', val: '8.4%', icon: Zap, color: '#F59E0B' },
-          { label: 'AD ROI', val: '4.2x', icon: TrendingUp, color: '#10B981' },
-          { label: 'AUDIENCE GROWTH', val: '+12%', icon: Users, color: '#8B5CF6' }
+          { label: 'WING PERSONNEL', val: memberCount, icon: Users, color: '#3B82F6' },
+          { label: 'ACTIVE CAMPAIGNS', val: 'Active', icon: Megaphone, color: '#F59E0B' },
+          { label: 'PENDING TASKS', val: taskCount, icon: Target, color: '#10B981' },
+          { label: 'TOTAL REACH', val: 'Global', icon: Globe, color: '#8B5CF6' }
         ].map((m, i) => (
           <Card key={i} className="glass-card mouse-glow" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
              <div style={{ padding: '12px', background: `${m.color}15`, borderRadius: '14px' }}>

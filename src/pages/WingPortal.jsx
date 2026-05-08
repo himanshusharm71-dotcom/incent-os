@@ -162,9 +162,23 @@ function WingPortal({ preview = false }) {
       )}
 
       {/* CHAIR ANNOUNCEMENT MARQUEE */}
-      <div style={{ background: config.color, color: '#fff', padding: '10px 20px', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '15px', boxShadow: `0 8px 20px ${config.color}20` }}>
+      <div style={{ background: config.color, color: '#fff', padding: '10px 20px', borderRadius: '14px', display: 'flex', alignItems: 'center', gap: '15px', boxShadow: `0 8px 20px ${config.color}20`, position: 'relative' }}>
         <Megaphone size={18} color="#fff" style={{ flexShrink: 0 }} />
-        <marquee style={{ fontSize: '0.9rem', fontWeight: '700' }}>{announcement}</marquee>
+        <marquee style={{ fontSize: '0.9rem', fontWeight: '700', flex: 1 }}>{announcement}</marquee>
+        {canCreate && (
+          <button 
+            onClick={() => {
+              const msg = prompt("Enter Global Announcement:", announcement);
+              if (msg) {
+                setAnnouncement(msg);
+                localStorage.setItem('chair_announcement', msg);
+              }
+            }}
+            style={{ background: 'rgba(255,255,255,0.2)', border: 'none', color: '#fff', padding: '4px 10px', borderRadius: '8px', fontSize: '0.7rem', fontWeight: '800', cursor: 'pointer' }}
+          >
+            UPDATE
+          </button>
+        )}
       </div>
 
       {/* PORTAL HERO */}
@@ -178,13 +192,30 @@ function WingPortal({ preview = false }) {
         <p style={{ margin: '0 0 2rem', color: 'var(--text-secondary)', fontSize: '1.1rem', maxWidth: '600px', lineHeight: 1.5 }}>{config.desc}</p>
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           {canCreate && (
-            <Button onClick={() => setShowMeetingModal(true)} style={{ background: config.color, color: '#fff', border: 'none', padding: '12px 24px', borderRadius: '14px' }} icon={<Plus size={16} />}>
-              Schedule Meeting
-            </Button>
+            <>
+              <Button onClick={() => setShowMeetingModal(true)} style={{ background: config.color, color: '#fff', border: 'none', padding: '12px 24px', borderRadius: '14px' }} icon={<Plus size={16} />}>
+                Schedule Meeting
+              </Button>
+              <Button onClick={() => navigate('/tasks')} variant="secondary" style={{ padding: '12px 24px', borderRadius: '14px', border: `1px solid ${config.color}40` }} icon={<CheckSquare size={16} />}>
+                Deploy Task
+              </Button>
+            </>
           )}
           <Button variant="secondary" onClick={() => navigate('/meetings')} icon={<Video size={16} />} style={{ borderRadius: '14px', padding: '12px 24px' }}>
             Meeting Logs
           </Button>
+          {!canCreate && (
+             <Button 
+                onClick={() => {
+                  const update = prompt("Post a status update for your team:");
+                  if (update) alert("Status shared with wing: " + update);
+                }}
+                style={{ background: 'rgba(0,0,0,0.05)', color: 'var(--text-primary)', border: 'none', padding: '12px 24px', borderRadius: '14px', fontWeight: '800' }}
+                icon={<Activity size={16} />}
+              >
+                Daily Check-in
+              </Button>
+          )}
           <Button variant="secondary" onClick={() => navigate('/tasks')} icon={<CheckSquare size={16} />} style={{ borderRadius: '14px', padding: '12px 24px' }}>
             Task Matrix
           </Button>

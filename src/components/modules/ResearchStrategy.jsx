@@ -8,8 +8,11 @@ import {
   FileSearch, Lightbulb, Microscope
 } from 'lucide-react';
 
-export default function ResearchStrategy() {
+export default function ResearchStrategy({ stats }) {
   const [activeTab, setActiveTab] = useState('insights');
+
+  const memberCount = stats?.members?.length || 0;
+  const taskCount = stats?.tasks?.length || 0;
 
   const insights = [
     { title: 'Market Saturation Alpha', type: 'Competitor Analysis', confidence: 92, date: 'May 05' },
@@ -21,12 +24,12 @@ export default function ResearchStrategy() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       
       {/* ── STRATEGY HUD ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
         {[
-          { label: 'STRATEGIC DEPTH', val: '84%', icon: Layers, color: '#6366F1' },
-          { label: 'MARKET COVERAGE', val: '12 Sectors', icon: Globe, color: '#10B981' },
-          { label: 'ANALYSIS VELOCITY', val: 'HIGH', icon: Zap, color: '#F59E0B' },
-          { label: 'KNOWLEDGE BASE', val: '2.4 GB', icon: BookOpen, color: '#8B5CF6' }
+          { label: 'WING PERSONNEL', val: memberCount, icon: Layers, color: '#6366F1' },
+          { label: 'MARKET COVERAGE', val: 'Active', icon: Globe, color: '#10B981' },
+          { label: 'PENDING TASKS', val: taskCount, icon: Zap, color: '#F59E0B' },
+          { label: 'KNOWLEDGE BASE', val: 'SECURE', icon: BookOpen, color: '#8B5CF6' }
         ].map((m, i) => (
           <Card key={i} className="glass-card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
              <div style={{ padding: '12px', background: `${m.color}15`, borderRadius: '14px' }}>
