@@ -8,17 +8,20 @@ import {
   MessageCircle, Building, Handshake
 } from 'lucide-react';
 
-export default function OutreachExpansion() {
+export default function OutreachExpansion({ stats }) {
   const [activeTab, setActiveTab] = useState('regions');
+
+  const memberCount = stats?.members?.length || 0;
+  const taskCount = stats?.tasks?.length || 0;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
         {[
-          { label: 'GLOBAL REACH', val: '12+', icon: Globe, color: '#EC4899' },
-          { label: 'NODAL CENTERS', val: '45', icon: Map, color: '#3B82F6' },
-          { label: 'INFLUENCER NET', val: '120', icon: Users, color: '#8B5CF6' },
-          { label: 'GROWTH RATE', val: '+22%', icon: TrendingUp, color: '#10B981' }
+          { label: 'WING PERSONNEL', val: memberCount, icon: Users, color: '#EC4899' },
+          { label: 'NODAL CENTERS', val: 'Active', icon: Map, color: '#3B82F6' },
+          { label: 'OUTREACH TASKS', val: taskCount, icon: Target, color: '#8B5CF6' },
+          { label: 'GROWTH RATE', val: 'STABLE', icon: TrendingUp, color: '#10B981' }
         ].map((m, i) => (
           <Card key={i} className="glass-card mouse-glow" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
              <div style={{ padding: '12px', background: `${m.color}15`, borderRadius: '14px' }}>

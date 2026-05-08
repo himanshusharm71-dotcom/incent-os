@@ -8,14 +8,19 @@ import {
   Flag, Timer, Cpu, Code
 } from 'lucide-react';
 
-export default function HackathonMatrix() {
+export default function HackathonMatrix({ stats }) {
   const [activeTab, setActiveTab] = useState('events');
 
-  const competitions = [
-    { name: 'CyberQuest 2026', type: 'Hackathon', prize: '$5,000', entrants: 450, status: 'Active' },
-    { name: 'Neural Logic UI', type: 'Design Challenge', prize: '$2,500', entrants: 120, status: 'Judging' },
-    { name: 'Blockchain Sprint', type: 'Speed Coding', prize: '$1,200', entrants: 85, status: 'Upcoming' }
-  ];
+  const memberCount = stats?.members?.length || 0;
+  const taskCount = stats?.tasks?.length || 0;
+
+  const competitions = stats?.tasks?.filter(t => t.priority === 'High').map(t => ({
+    name: t.title,
+    type: 'Task-based Event',
+    prize: 'Points',
+    entrants: memberCount,
+    status: t.status === 'completed' ? 'Judging' : 'Active'
+  })) || [];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -23,10 +28,10 @@ export default function HackathonMatrix() {
       {/* ── COMPETITION HUD ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
         {[
-          { label: 'TOTAL ENTRANTS', val: '655', icon: Users, color: '#3B82F6' },
-          { label: 'PRIZE POOL', val: '$8.7k', icon: Trophy, color: '#F59E0B' },
-          { label: 'ACTIVE EVENTS', val: 3, icon: Rocket, color: '#10B981' },
-          { label: 'REGISTRATION VELOCITY', val: 'HIGH', icon: Zap, color: '#F43F5E' }
+          { label: 'WING PERSONNEL', val: memberCount, icon: Users, color: '#3B82F6' },
+          { label: 'HIGH PRIORITY OPS', val: competitions.length, icon: Trophy, color: '#F59E0B' },
+          { label: 'TOTAL TASKS', val: taskCount, icon: Rocket, color: '#10B981' },
+          { label: 'NETWORK VELOCITY', val: 'STABLE', icon: Zap, color: '#F43F5E' }
         ].map((m, i) => (
           <Card key={i} className="glass-card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
              <div style={{ padding: '12px', background: `${m.color}15`, borderRadius: '14px' }}>

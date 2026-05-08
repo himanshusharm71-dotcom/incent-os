@@ -5,20 +5,23 @@ import { Button } from '../ui/Button';
 import { 
   Users, MapPin, Award, Zap, Search, Plus, 
   Target, TrendingUp, Star, PhoneCall,
-  MessageSquare, Globe, ShieldCheck
+  MessageSquare, Globe, ShieldCheck, Shield
 } from 'lucide-react';
 
-export default function AmbassadorNetwork() {
-  const [activeTab, setActiveTab] = useState('network');
+export default function AmbassadorNetwork({ stats }) {
+  const [activeTab, setActiveTab] = useState('campuses');
+
+  const memberCount = stats?.members?.length || 0;
+  const taskCount = stats?.tasks?.length || 0;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
         {[
-          { label: 'ACTIVE AMBASSADORS', val: '84', icon: Users, color: '#A855F7' },
-          { label: 'INSTITUTIONS', val: '32', icon: MapPin, color: '#3B82F6' },
-          { label: 'CAMPAIGNS', val: '12', icon: Zap, color: '#F59E0B' },
-          { label: 'TOTAL POINTS', val: '45.2k', icon: Award, color: '#10B981' }
+          { label: 'WING PERSONNEL', val: memberCount, icon: Users, color: '#A855F7' },
+          { label: 'CAMPUS NODES', val: 'Active', icon: Globe, color: '#3B82F6' },
+          { label: 'ACTIVE CAMPAIGNS', val: taskCount, icon: Zap, color: '#F59E0B' },
+          { label: 'NETWORK HEALTH', val: '98%', icon: Shield, color: '#10B981' }
         ].map((m, i) => (
           <Card key={i} className="glass-card mouse-glow" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
              <div style={{ padding: '12px', background: `${m.color}15`, borderRadius: '14px' }}>

@@ -194,22 +194,22 @@ function WingPortal({ preview = false }) {
 
       {(() => {
         switch(targetTeam) {
-          case 'Core': return <ExecutiveCommand team={targetTeam} />;
-          case 'Startup & Incubation': return <StartupIncubation team={targetTeam} />;
-          case 'Tech & Development': return <TechDev team={targetTeam} />;
-          case 'Corporate Relations & MOU': return <CorporateRelations team={targetTeam} />;
-          case 'Events & Operations': return <EventsOperations team={targetTeam} />;
-          case 'Placement & Startup Hiring': return <HiringPlacement team={targetTeam} />;
+          case 'Core': return <ExecutiveCommand team={targetTeam} stats={stats} user={user} />;
+          case 'Startup & Incubation': return <StartupIncubation team={targetTeam} stats={stats} user={user} />;
+          case 'Tech & Development': return <TechDev team={targetTeam} stats={stats} user={user} />;
+          case 'Corporate Relations & MOU': return <CorporateRelations team={targetTeam} stats={stats} user={user} />;
+          case 'Events & Operations': return <EventsOperations team={targetTeam} stats={stats} user={user} />;
+          case 'Placement & Startup Hiring': return <HiringPlacement team={targetTeam} stats={stats} user={user} />;
           case 'Public Relations (PR)': 
-          case 'Marketing & Media': return <PublicityMarketing team={targetTeam} />;
-          case 'Design & Creative': return <DesignCreative team={targetTeam} />;
-          case 'Research & Strategy': return <ResearchStrategy team={targetTeam} />;
-          case 'Data Analytics & Insights': return <DataAnalytics team={targetTeam} />;
-          case 'Competitions & Hackathon': return <HackathonMatrix team={targetTeam} />;
-          case 'Outreach & Expansion': return <OutreachExpansion team={targetTeam} />;
-          case 'Documentation': return <DocumentationVault team={targetTeam} />;
-          case 'Campus Ambassadors': return <AmbassadorNetwork team={targetTeam} />;
-          default: return <GeneralModule team={targetTeam} />;
+          case 'Marketing & Media': return <PublicityMarketing team={targetTeam} stats={stats} user={user} />;
+          case 'Design & Creative': return <DesignCreative team={targetTeam} stats={stats} user={user} />;
+          case 'Research & Strategy': return <ResearchStrategy team={targetTeam} stats={stats} user={user} />;
+          case 'Data Analytics & Insights': return <DataAnalytics team={targetTeam} stats={stats} user={user} />;
+          case 'Competitions & Hackathon': return <HackathonMatrix team={targetTeam} stats={stats} user={user} />;
+          case 'Outreach & Expansion': return <OutreachExpansion team={targetTeam} stats={stats} user={user} />;
+          case 'Documentation': return <DocumentationVault team={targetTeam} stats={stats} user={user} />;
+          case 'Campus Ambassadors': return <AmbassadorNetwork team={targetTeam} stats={stats} user={user} />;
+          default: return <GeneralModule team={targetTeam} stats={stats} user={user} />;
         }
       })()}
 

@@ -7,7 +7,10 @@ import {
   Cpu, Shield, Zap, Globe, Database, Network
 } from 'lucide-react';
 
-export default function GeneralModule({ team }) {
+export default function GeneralModule({ team, stats }) {
+  const memberCount = stats?.members?.length || 0;
+  const taskCount = stats?.tasks?.length || 0;
+
   const tools = [
     { name: 'Core Documentation', icon: FileText, desc: 'Centralized Knowledge Vault' },
     { name: 'Strategic Roadmap', icon: Target, desc: 'Mission Milestones & Objectives' },
@@ -47,14 +50,14 @@ export default function GeneralModule({ team }) {
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
              {[
-               { t: 'Personnel sync complete', d: '02h', s: 'STABLE' },
-               { t: 'Cloud node encrypted', d: '05h', s: 'ACTIVE' },
-               { t: 'Neural link refreshed', d: '12h', s: 'SECURE' }
+               { t: 'Personnel sync complete', d: `${memberCount} Members`, s: 'STABLE' },
+               { t: 'Active Task Matrix', d: `${taskCount} Tasks`, s: 'ACTIVE' },
+               { t: 'Sector handshake', d: 'SUCCESS', s: 'SECURE' }
              ].map((item, i) => (
                 <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px', background: 'rgba(0,0,0,0.02)', borderRadius: '18px', border: '1px solid rgba(0,0,0,0.03)' }}>
                    <div>
                       <div style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--text-primary)' }}>{item.t}</div>
-                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '700' }}>TIMESTAMP: T-{item.d}</div>
+                      <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', fontWeight: '700' }}>{item.d}</div>
                    </div>
                    <Badge style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#10B981', fontSize: '0.55rem', border: 'none' }}>{item.s}</Badge>
                 </div>
@@ -69,7 +72,7 @@ export default function GeneralModule({ team }) {
             <Network size={24} color="var(--accent-primary)" /> NEURAL NET
            </h3>
            <p style={{ fontSize: '0.95rem', color: 'var(--text-muted)', marginBottom: '2rem', lineHeight: 1.6, fontWeight: '500' }}>
-            Initializing quantum handshake for the <strong>{team}</strong> sector. Data integrity verified at 99.9%.
+            Managing <strong>{memberCount} personnel</strong> and <strong>{taskCount} tasks</strong> for the <strong>{team}</strong> sector. Data integrity verified.
            </p>
            <div style={{ position: 'relative', height: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ position: 'absolute', width: 60, height: 60, border: '2px solid var(--accent-primary)', borderRadius: '50%', animation: 'pulse 2s infinite' }}></div>

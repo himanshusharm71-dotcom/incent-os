@@ -8,17 +8,20 @@ import {
   HardDrive, Database, Archive
 } from 'lucide-react';
 
-export default function DocumentationVault() {
+export default function DocumentationVault({ stats }) {
   const [activeTab, setActiveTab] = useState('archives');
+
+  const memberCount = stats?.members?.length || 0;
+  const taskCount = stats?.tasks?.length || 0;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
         {[
-          { label: 'TOTAL DOCS', val: '1,240', icon: FileText, color: '#64748B' },
-          { label: 'ARCHIVED', val: '850', icon: Archive, color: '#3B82F6' },
-          { label: 'STORAGE', val: '4.2 GB', icon: HardDrive, color: '#F59E0B' },
-          { label: 'SECURITY', val: 'L3', icon: Shield, color: '#10B981' }
+          { label: 'WING PERSONNEL', val: memberCount, icon: Users, color: '#64748B' },
+          { label: 'ACTIVE TASKS', val: taskCount, icon: FileText, color: '#3B82F6' },
+          { label: 'CLOUD STORAGE', val: 'Active', icon: HardDrive, color: '#F59E0B' },
+          { label: 'SECURITY STATUS', val: 'SECURE', icon: Shield, color: '#10B981' }
         ].map((m, i) => (
           <Card key={i} className="glass-card mouse-glow" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
              <div style={{ padding: '12px', background: `${m.color}15`, borderRadius: '14px' }}>
@@ -64,21 +67,20 @@ export default function DocumentationVault() {
                 <Button variant="primary" size="sm" icon={<Plus size={16} />}>Index New Doc</Button>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                 {[
-                   { name: 'Annual Strategy 2024', type: 'PDF', size: '2.4 MB', status: 'Locked' },
-                   { name: 'Onboarding Manual', type: 'DOCX', size: '1.1 MB', status: 'Public' },
-                   { name: 'Partner Agreements', type: 'ZIP', size: '45 MB', status: 'Encrypted' }
-                 ].map((doc, i) => (
+                 {(stats?.tasks?.length > 0 ? stats.tasks : [
+                   { title: 'Sector Charter', priority: 'High', created_at: new Date() },
+                   { title: 'Standard Ops Procedure', priority: 'Medium', created_at: new Date() }
+                 ]).map((doc, i) => (
                    <div key={i} className="card-hover" style={{ padding: '1.25rem', background: 'rgba(0,0,0,0.02)', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                          <div style={{ padding: '10px', background: 'rgba(100,116,139,0.1)', borderRadius: '12px' }}><FileText size={20} color="#64748B" /></div>
                          <div>
-                            <div style={{ fontWeight: '800', fontSize: '0.95rem' }}>{doc.name}</div>
-                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{doc.type} • {doc.size}</div>
+                            <div style={{ fontWeight: '800', fontSize: '0.95rem' }}>{doc.title || doc.name}</div>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{doc.priority || 'DOC'} • {new Date(doc.created_at).toLocaleDateString()}</div>
                          </div>
                       </div>
                       <div style={{ display: 'flex', gap: '10px' }}>
-                         <Badge size="sm" style={{ background: 'rgba(0,0,0,0.05)', color: 'var(--text-muted)' }}>{doc.status}</Badge>
+                         <Badge size="sm" style={{ background: 'rgba(0,0,0,0.05)', color: 'var(--text-muted)' }}>{doc.status || 'Active'}</Badge>
                          <Button size="sm" variant="secondary" style={{ padding: '6px' }}><Download size={14} /></Button>
                       </div>
                    </div>

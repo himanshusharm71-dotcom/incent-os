@@ -8,14 +8,17 @@ import {
   Contrast, CheckCircle, RefreshCw, Zap, ExternalLink
 } from 'lucide-react';
 
-export default function DesignCreative() {
+export default function DesignCreative({ stats }) {
   const [activeTab, setActiveTab] = useState('library');
 
-  const assets = [
-    { name: 'Incent Logo V2', type: 'SVG', date: 'May 04', preview: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=300&h=300&fit=crop' },
-    { name: 'Campaign Banner', type: 'PNG', date: 'May 06', preview: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?w=300&h=300&fit=crop' },
-    { name: 'UI Icon Set', type: 'FIGMA', date: 'May 07', preview: 'https://images.unsplash.com/photo-1558655146-d09347e92766?w=300&h=300&fit=crop' }
-  ];
+  const assets = stats?.tasks?.slice(0, 3).map(t => ({
+    name: t.title,
+    type: t.priority || 'Task',
+    date: new Date(t.created_at).toLocaleDateString('default', { month: 'short', day: 'numeric' }),
+    preview: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?w=300&h=300&fit=crop'
+  })) || [];
+
+  const memberCount = stats?.members?.length || 0;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -23,10 +26,10 @@ export default function DesignCreative() {
       {/* ── DESIGN HUD ── */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
         {[
-          { label: 'TOTAL ASSETS', val: 128, icon: Layers, color: '#F43F5E' },
-          { label: 'PENDING REVIEWS', val: 5, icon: Eye, color: '#3B82F6' },
-          { label: 'STORAGE USED', val: '2.4 GB', icon: Image, color: '#8B5CF6' },
-          { label: 'TEAM VELOCITY', val: 'HIGH', icon: Zap, color: '#10B981' }
+          { label: 'WING PERSONNEL', val: memberCount, icon: Layers, color: '#F43F5E' },
+          { label: 'ACTIVE TASKS', val: stats?.tasks?.length || 0, icon: Eye, color: '#3B82F6' },
+          { label: 'PENDING OPS', val: stats?.tasks?.filter(t => t.status !== 'completed').length || 0, icon: Image, color: '#8B5CF6' },
+          { label: 'TEAM VELOCITY', val: 'STABLE', icon: Zap, color: '#10B981' }
         ].map((m, i) => (
           <Card key={i} className="glass-card mouse-glow" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
              <div style={{ padding: '12px', background: `${m.color}15`, borderRadius: '14px' }}>

@@ -5,20 +5,24 @@ import { Button } from '../ui/Button';
 import { 
   Shield, Zap, Activity, Users, Globe, Target, 
   BarChart3, PieChart, TrendingUp, AlertTriangle,
-  Lock, Key, Eye
+  Lock, Key, Eye, CheckCircle
 } from 'lucide-react';
 
-export default function ExecutiveCommand() {
+export default function ExecutiveCommand({ stats }) {
   const [activeTab, setActiveTab] = useState('overview');
+
+  const memberCount = stats?.members?.length || 0;
+  const completedTasks = stats?.tasks?.filter(t => t.status === 'completed').length || 0;
+  const pendingTasks = stats?.tasks?.filter(t => t.status !== 'completed').length || 0;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem' }}>
         {[
-          { label: 'GLOBAL STABILITY', val: '99.9%', icon: Shield, color: '#F97316' },
-          { label: 'ACTIVE NODES', val: '15 Wings', icon: Zap, color: '#3B82F6' },
-          { label: 'QUORUM STATUS', val: 'REACHED', icon: Users, color: '#10B981' },
-          { label: 'ORGANIZATIONAL VELOCITY', val: 'MAX', icon: Activity, color: '#F43F5E' }
+          { label: 'WING STABILITY', val: '99.9%', icon: Shield, color: '#F97316' },
+          { label: 'ACTIVE PERSONNEL', val: `${memberCount} Members`, icon: Users, color: '#3B82F6' },
+          { label: 'OPERATIONS COMPLETED', val: completedTasks, icon: CheckCircle, color: '#10B981' },
+          { label: 'PENDING TASKS', val: pendingTasks, icon: Activity, color: '#F43F5E' }
         ].map((m, i) => (
           <Card key={i} className="glass-card mouse-glow" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
              <div style={{ padding: '12px', background: `${m.color}15`, borderRadius: '14px' }}>
