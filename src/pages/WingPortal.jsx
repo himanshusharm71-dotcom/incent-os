@@ -8,7 +8,7 @@ import { Button } from '../components/ui/Button';
 import { 
   Users, CheckSquare, MessageSquare, Video,
   Star, Zap, Clock, Rocket, Target, Globe, Calendar,
-  Box, Megaphone, Shield, FileText, Plus, X, CheckCircle
+  Box, Megaphone, Shield, FileText, Plus, X, CheckCircle, Trophy
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 
